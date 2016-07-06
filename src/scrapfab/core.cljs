@@ -1,5 +1,7 @@
 (ns scrapfab.core
-  (:require [reagent.core :as reagent :refer [atom]]))
+  (:require [scrapfab.services :refer [services]]
+            [scrapfab.images :refer [images]]
+            [reagent.core :as reagent :refer [atom]]))
 
 (enable-console-print!)
 
@@ -45,7 +47,7 @@
              :on-click (partial navigate! url)}
             title]])))]])
 
-(defn service
+(defn render-service
   [{:keys [title desc images]}]
   [:div.service
    [:div.pure-g
@@ -55,45 +57,32 @@
     [:div.pure-u-2-3
      [:div.pure-g.gallery
       (doall
-        (for [src images]
-          ^{:key src}
+        (for [img images]
+          ^{:key (:src img)}
           [:div.pure-u-1-3.gallery-cell
-           [:img.gallery-img {:src src}]]))]]]])
+           [:img.gallery-img {:src (:src img)}]]))]]]])
 
-(def our-services
-  [{:title "Metal Fabrication"
-    :desc "We do metal stuff"
-    :images ["img/van_shelving.jpg"
-             "img/trailer.jpg"
-             "img/railing.jpg"]}
-   {:title "Prop Fabrication"
-    :desc "We fabricate props."
-    :images ["img/spaceship.jpg"
-             "img/see_saw.jpg"
-             "img/music_car.jpg"
-             "img/fire_stick.jpg"
-             "img/toyota_concept_1.jpg"
-             "img/toyota_concept_2.jpg"
-             "img/cop_car.jpg"]}
-   {:title "Set Design"
-    :desc "We design sets."
-    :images ["img/edc_show.jpg"
-             "img/edc_flower.jpg"
-             "img/corp_head.jpg"
-             "img/kicks_1.jpg"
-             "img/kicks_2.jpg"
-             "img/kicks_3.jpg"
-             "img/toyota_set_1.jpg"
-             "img/toyota_set_2.jpg"
-             "img/toyota_set_3.jpg"]}])
+(defn contains-service?
+  [service image]
+  (contains? (:services image) service))
 
-(defn services
+(defn load-service
+  [service]
+  (let [{:keys [title desc]} (get services service)
+        images (filter (partial contains-service? service) images)]
+    {:title  title
+     :desc   desc
+     :images images}))
+
+(println (load-service :metal))
+
+(defn services-page
   []
   [:div.services
    (doall
-     (for [s our-services]
+     (for [s (keys services)]
        ^{:key (:title s)}
-       (service s)))])
+       (render-service (load-service s))))])
 
 (def site-pages
   {"/"
@@ -107,7 +96,7 @@
 
    "/services"
    {:title "Services"
-    :body (services)}
+    :body (services-page)}
 
    "/contact"
    {:title "Contact"}})
