@@ -1,2 +1,45 @@
 /* some style */
 
+.app {
+    margin: 0 auto;
+    width: 960px;
+}
+
+.logo-container {
+    padding: 1rem 0.5rem 0 0;
+    color: #fff;
+    line-height: 4rem;
+}
+
+.logo {
+    font-family: Muncie;
+    font-size: 4rem;
+}
+
+.logo-scrap, .logo-fab {
+    padding: 1rem 0.5rem 0 0.5rem;
+}
+
+.logo-scrap {
+    background: #ee5e4f;
+}
+
+.logo-fab {
+    background: #a92b1e;
+}
+
+.main-menu {
+    padding-left: 0;
+    position: relative;
+
+    border-style: none none solid none;
+    border-width: 1px;
+}
+
+.main-menu .pure-menu-list {
+    text-transform: uppercase;
+    position: absolute;
+    line-height: 4rem;
+    right: 0;
+    font-size: 1em;
+}

@@ -3,6 +3,8 @@
 
 (enable-console-print!)
 
+;; SPA wiring
+
 (def real-links?
   "Set to false to render website as an SPA, set to true if links
   should navigate to the new url."
@@ -13,31 +15,35 @@
   (atom "/"))
 
 (defn navigate!
-  [url]
+  [url e]
   "Set the current url of the SPA to the given url."
+  (.preventDefault e)
   (reset! location url))
 
 (defn logo
   []
-  [:h1 "ScrapFab"])
+  [:div.logo
+   [:span.logo-scrap "scrap"]
+   [:span.logo-fab "fab"]])
 
 (defn navigation
   "Main site navigation."
   [pages]
-  (println @location)
-  [:ul.pure-menu
-   [:ul.pure-menu-heading (logo)]
+  [:ul.pure-menu.pure-menu-horizontal.main-menu
+   [:ul.pure-menu-heading.logo-container (logo)]
    [:ul.pure-menu-list
-    (for [[url {:keys [title skip-nav?]}] pages]
-      (when-not skip-nav?
-        [:li.pure-menu-item
-         {:class (when (= url @location) "pure-menu-selected")}
-         [:a.pure-menu-link
-          (if real-links?
-            {:href url}
-            {:href "#"
-             :on-click (partial navigate! url)})
-          title]]))]])
+    (doall
+      (for [[url {:keys [title skip-nav?]}] pages]
+        (when-not skip-nav?
+          (println (str "current:"@location" url:"url))
+          ^{:key url}
+          [:li.pure-menu-item
+           {:class
+            (when (= url @location) "pure-menu-selected")}
+           [:a.pure-menu-link
+            {:href url
+             :on-click (partial navigate! url)}
+            title]])))]])
 
 (def site-pages
   {"/"
@@ -62,9 +68,9 @@
   "Main site template containing the logo and navigation."
   [& {:keys [pages]}]
   (let [body (get-in pages [@location :body])]
-    [:div.pure-u-g
-     [:div.pure-u-1-5 [navigation pages]]
-     [:div.pure-u-4-5 body]]))
+    [:div.app
+     [:div.header [navigation pages]]
+     body]))
 
 (reagent/render-component [site :pages site-pages]
                           (. js/document (getElementById "app")))
