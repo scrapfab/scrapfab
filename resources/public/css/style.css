@@ -1,5 +1,14 @@
 /* some style */
 
+body,
+.pure-g [class *= "pure-u"],
+.pure-g-r [class *= "pure-u"] {
+    font-family: Raleway;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+}
+
 .app {
     margin: 0 auto;
     width: 960px;
@@ -42,4 +51,24 @@
     line-height: 4rem;
     right: 0;
     font-size: 1em;
+}
+
+.service {
+    border-style: solid none none none;
+    border-width: 1px;
+    margin: 0 0 1rem 0;
+}
+
+.gallery-cell {
+    box-sizing: border-box;
+    padding: 0.25em;
+}
+
+.gallery-img {
+    width: 100%;
+}
+
+.gallery {
+    padding: 0.25em;
+    background: #222;
 }

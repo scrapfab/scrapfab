@@ -2,3 +2,8 @@
     font-family: "Muncie";
     src: url("/fonts/Muncie.ttf");
 }
+
+@font-face {
+    font-family: "Raleway";
+    src: url("/fonts/raleway_thin-webfont.ttf");
+}
