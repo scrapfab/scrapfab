@@ -14,7 +14,7 @@ body,
     width: 960px;
 }
 
-.logo-container {
+.main-menu.pure-menu-heading {
     padding: 1rem 0.5rem 0 0;
     color: #fff;
     line-height: 4rem;
@@ -37,7 +37,7 @@ body,
     background: #a92b1e;
 }
 
-.main-menu {
+.main-menu.pure-menu {
     padding-left: 0;
     position: relative;
 
@@ -45,7 +45,7 @@ body,
     border-width: 1px;
 }
 
-.main-menu .pure-menu-list {
+.main-menu.pure-menu-list {
     text-transform: uppercase;
     position: absolute;
     line-height: 4rem;

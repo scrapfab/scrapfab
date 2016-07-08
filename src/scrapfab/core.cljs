@@ -1,5 +1,7 @@
 (ns scrapfab.core
-  (:require [scrapfab.services :refer [services]]
+  (:require [scrapfab.menu :refer [horizontal-menu]]
+
+            [scrapfab.services :refer [services]]
             [scrapfab.images :refer [images]]
             [reagent.core :as reagent :refer [atom]]))
 
@@ -28,25 +30,6 @@
    [:span.logo-scrap "scrap"]
    [:span.logo-fab "fab"]])
 
-(defn navigation
-  "Main site navigation."
-  [pages]
-  [:ul.pure-menu.pure-menu-horizontal.main-menu
-   [:ul.pure-menu-heading.logo-container (logo)]
-   [:ul.pure-menu-list
-    (doall
-      (for [[url {:keys [title skip-nav?]}] pages]
-        (when-not skip-nav?
-          (println (str "current:"@location" url:"url))
-          ^{:key url}
-          [:li.pure-menu-item
-           {:class
-            (when (= url @location) "pure-menu-selected")}
-           [:a.pure-menu-link
-            {:href url
-             :on-click (partial navigate! url)}
-            title]])))]])
-
 (defn render-service
   [{:keys [title desc images]}]
   [:div.service
@@ -74,8 +57,6 @@
      :desc   desc
      :images images}))
 
-(println (load-service :metal))
-
 (defn services-page
   []
   [:div.services
@@ -101,12 +82,26 @@
    "/contact"
    {:title "Contact"}})
 
+(defn main-menu
+  []
+  (let [items      (map (fn [[url {:keys [title]}]]
+                          {:id url
+                           :label title})
+                        (dissoc site-pages "/"))
+        current-id @location
+        on-change  (fn [url] (reset! location url))]
+    [horizontal-menu :items      items
+                     :current-id current-id
+                     :on-change  on-change
+                     :class      "main-menu"
+                     :brand      (logo)]))
+
 (defn site
   "Main site template containing the logo and navigation."
   [& {:keys [pages]}]
   (let [body (get-in pages [@location :body])]
     [:div.app
-     [:div.header [navigation pages]]
+     [:div.header [main-menu]]
      body]))
 
 (reagent/render-component [site :pages site-pages]
