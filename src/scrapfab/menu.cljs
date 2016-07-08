@@ -42,5 +42,18 @@
           {:href     (url-fn item)
            :on-click (fn [e]
                        (.preventDefault e)
-                       (on-change (id-fn item)))}
+                       (on-change item))}
           (label-fn item)]]))]])
+
+(defn navigation
+  [& {:keys [items class brand]}]
+  [horizontal-menu :items items
+                   :class class
+                   :brand brand
+                   :current-id @current-url
+                   :id-fn :url
+                   :url-fn :url
+                   :selected-fn (fn [item] (sub-url? @current-url (:url item)))
+                   :on-change (fn [item]
+                                (println item)
+                                (set-url! (:url item)))])

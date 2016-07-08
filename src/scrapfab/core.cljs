@@ -1,5 +1,6 @@
 (ns scrapfab.core
-  (:require [scrapfab.menu :refer [horizontal-menu]]
+  (:require [scrapfab.menu :refer [navigation]]
+            [scrapfab.spa :refer [current-url]]
 
             [scrapfab.services :refer [services]]
             [scrapfab.images :refer [images]]
@@ -8,21 +9,6 @@
 (enable-console-print!)
 
 ;; SPA wiring
-
-(def real-links?
-  "Set to false to render website as an SPA, set to true if links
-  should navigate to the new url."
-  false)
-
-(def location
-  "Holds the current url of the SPA."
-  (atom "/"))
-
-(defn navigate!
-  [url e]
-  "Set the current url of the SPA to the given url."
-  (.preventDefault e)
-  (reset! location url))
 
 (defn logo
   []
@@ -85,21 +71,17 @@
 (defn main-menu
   []
   (let [items      (map (fn [[url {:keys [title]}]]
-                          {:id url
+                          {:url url
                            :label title})
-                        (dissoc site-pages "/"))
-        current-id @location
-        on-change  (fn [url] (reset! location url))]
-    [horizontal-menu :items      items
-                     :current-id current-id
-                     :on-change  on-change
-                     :class      "main-menu"
-                     :brand      (logo)]))
+                        (dissoc site-pages "/"))]
+    [navigation :items      items
+                :class      "main-menu"
+                :brand      (logo)]))
 
 (defn site
   "Main site template containing the logo and navigation."
   [& {:keys [pages]}]
-  (let [body (get-in pages [@location :body])]
+  (let [body (get-in pages [@current-url :body])]
     [:div.app
      [:div.header [main-menu]]
      body]))

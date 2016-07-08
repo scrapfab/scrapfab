@@ -1,17 +1,12 @@
 (ns scrapfab.spa
   (:require [reagent.core :as reagent :refer [atom]]))
 
-(defonce location (atom "/"))
-
-(defn current-url
-  "Returns the current URL of the static-site SPA."
-  []
-  @location)
+(defonce current-url (atom "/"))
 
 (defn set-url!
   "Sets the current URL of the static-site SPA to the given URL."
   [url]
-  (reset! location url))
+  (reset! current-url url))
 
 (defn sub-url?
   [parent-url url]
