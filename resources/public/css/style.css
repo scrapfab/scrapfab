@@ -1,5 +1,7 @@
 /* some style */
 
+body { background: #eee; }
+
 body,
 .pure-g [class *= "pure-u"],
 .pure-g-r [class *= "pure-u"] {
