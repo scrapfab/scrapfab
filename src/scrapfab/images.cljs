@@ -1,5 +1,5 @@
 (ns scrapfab.images
- (:require [clojure.set]))
+ (:require [clojure.set :refer [subset?]]))
 
 ;; Possible image types:
 ;;

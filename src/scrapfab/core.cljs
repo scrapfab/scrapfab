@@ -1,6 +1,6 @@
 (ns scrapfab.core
   (:require [scrapfab.menu :refer [navigation]]
-            [scrapfab.spa :refer [current-url]]
+            [scrapfab.spa :refer [current-url set-url!]]
 
             [scrapfab.images :as images :refer [tagged?]]
             [scrapfab.desc :as desc]
@@ -61,16 +61,30 @@
                :class "service-menu"]
    content])
 
+(defn gallery
+  [images]
+  [:div.pure-g.gallery
+   (doall
+     (for [{:keys [src]} images]
+       ^{:key src}
+       [:div.pure-u-1-3.gallery-cell
+        [:img.gallery-img
+         {:src src}]]))])
+
 (defn service-index
   [{:keys [images]}]
-  [service-layout :content "our services"])
+  [service-layout :content
+   [:div
+    [:h1 "We provide all the services"]
+    [gallery images]]])
 
 (defn service-page
   [{:keys [title images desc]}]
   [service-layout :content
    [:div
     [:h1 title]
-    desc]])
+    [:p desc]
+    [gallery images]]])
 
 (def site-map
   {"/about"              {:title  "About"
@@ -105,7 +119,7 @@
 (def scrapfab
   {:layout scrapfab-layout
    :site-map site-map
-   :images images/images})
+   :media images/images})
 
 (defn render-site
   [site]
