@@ -2,13 +2,23 @@
   (:require [scrapfab.menu :refer [navigation]]
             [scrapfab.spa :refer [current-url]]
 
-            [scrapfab.services :refer [services]]
-            [scrapfab.images :refer [images]]
+            [scrapfab.images :as images :refer [tagged?]]
+            [scrapfab.desc :as desc]
+
             [reagent.core :as reagent :refer [atom]]))
 
 (enable-console-print!)
 
-;; SPA wiring
+;; ---- app wiring ----
+
+(defn render-url
+  [{:keys [site-map layout media]} url]
+  (let [{:keys [render tags] :as page} (get site-map url)
+        images (filter #(tagged? tags %) media)
+        page   (assoc (dissoc page :render) :images images)]
+    [layout :content [render page]]))
+
+;; ---- scrapfab ----
 
 (defn logo
   []
@@ -16,77 +26,92 @@
    [:span.logo-scrap "scrap"]
    [:span.logo-fab "fab"]])
 
-(defn render-service
-  [{:keys [title desc images]}]
-  [:div.service
-   [:div.pure-g
-    [:div.pure-u-1-3
-     [:h2 title]
-     desc]
-    [:div.pure-u-2-3
-     [:div.pure-g.gallery
-      (doall
-        (for [img images]
-          ^{:key (:src img)}
-          [:div.pure-u-1-3.gallery-cell
-           [:img.gallery-img {:src (:src img)}]]))]]]])
+(def main-navigation
+  [{:url "/about" :label "About"}
+   {:url "/services" :label "Services"}
+   {:url "/contact" :label "Contact"}])
 
-(defn contains-service?
-  [service image]
-  (contains? (:services image) service))
+(defn scrapfab-layout
+  [& {:keys [content]}]
+  [:div.app
+   [:div.header
+    [navigation :items main-navigation
+                :brand [logo]
+                :class "main-menu"]]
+    content])
 
-(defn load-service
-  [service]
-  (let [{:keys [title desc]} (get services service)
-        images (filter (partial contains-service? service) images)]
-    {:title  title
-     :desc   desc
-     :images images}))
+(defn about-page
+  [_]
+  [:div "about us"])
 
-(defn services-page
-  []
-  [:div.services
-   (doall
-     (for [s (keys services)]
-       ^{:key (:title s)}
-       (render-service (load-service s))))])
+(defn contact-page
+  [_]
+  [:div "contact us"])
 
-(def site-pages
-  {"/"
-   {:title     "Home"
-    :body      "Hello, world"
-    :skip-nav? true}
+(def service-navigation
+  [{:url "/services/metal" :label "Metal Fabrication"}
+   {:url "/services/prop" :label "Prop Fabrication"}
+   {:url "/services/set" :label "Set Design"}
+   {:url "/services/sculpture" :label "Sculpture"}])
 
-   "/about"
-   {:title "About"
-    :body  "About us"}
+(defn service-layout
+  [& {:keys [content]}]
+  [:div
+   [navigation :items service-navigation
+               :class "service-menu"]
+   content])
 
-   "/services"
-   {:title "Services"
-    :body (services-page)}
+(defn service-index
+  [{:keys [images]}]
+  [service-layout :content "our services"])
 
-   "/contact"
-   {:title "Contact"}})
+(defn service-page
+  [{:keys [title images desc]}]
+  [service-layout :content
+   [:div
+    [:h1 title]
+    desc]])
 
-(defn main-menu
-  []
-  (let [items      (map (fn [[url {:keys [title]}]]
-                          {:url url
-                           :label title})
-                        (dissoc site-pages "/"))]
-    [navigation :items      items
-                :class      "main-menu"
-                :brand      (logo)]))
+(def site-map
+  {"/about"              {:title  "About"
+                          :render about-page}
 
-(defn site
-  "Main site template containing the logo and navigation."
-  [& {:keys [pages]}]
-  (let [body (get-in pages [@current-url :body])]
-    [:div.app
-     [:div.header [main-menu]]
-     body]))
+   "/contact"            {:title  "Contact"
+                          :render contact-page}
 
-(reagent/render-component [site :pages site-pages]
+   "/services"           {:title  "Services"
+                          :render service-index}
+
+   "/services/metal"     {:title  "Metal Fabrication"
+                          :desc   desc/metal
+                          :tags   [:metal]
+                          :render service-page}
+
+   "/services/prop"      {:title  "Prop Fabrication"
+                          :desc   desc/prop
+                          :tags   [:prop]
+                          :render service-page}
+
+   "/services/set"       {:title  "Set Fabrication"
+                          :desc   desc/set
+                          :tags   [:set]
+                          :render service-page}
+
+   "/services/sculpture" {:title  "Sculpture"
+                          :desc   desc/sculpt
+                          :tags   [:sculpt]
+                          :render service-page}})
+
+(def scrapfab
+  {:layout scrapfab-layout
+   :site-map site-map
+   :images images/images})
+
+(defn render-site
+  [site]
+  [render-url site @current-url])
+
+(reagent/render-component [render-site scrapfab]
                           (. js/document (getElementById "app")))
 
 

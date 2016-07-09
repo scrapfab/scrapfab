@@ -55,6 +55,10 @@ body,
     font-size: 1em;
 }
 
+.service-menu {
+    text-align: center;
+}
+
 .service {
     border-style: solid none none none;
     border-width: 1px;

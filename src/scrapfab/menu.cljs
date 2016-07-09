@@ -55,5 +55,4 @@
                    :url-fn :url
                    :selected-fn (fn [item] (sub-url? @current-url (:url item)))
                    :on-change (fn [item]
-                                (println item)
                                 (set-url! (:url item)))])

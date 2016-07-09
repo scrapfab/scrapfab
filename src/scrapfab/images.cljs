@@ -1,4 +1,5 @@
-(ns scrapfab.images)
+(ns scrapfab.images
+ (:require [clojure.set]))
 
 ;; Possible image types:
 ;;
@@ -11,30 +12,33 @@
   [{:title "Police Car"
     :desc  ""
     :src   "/img/cop_car.jpg"
-    :services #{:prop}}
+    :tags  #{:prop}}
 
    {:title "Corporate Headquarters"
     :desc  ""
     :src   "/img/corp_head.jpg"
-    :services #{:set}}
+    :tags  #{:set}}
 
    {:title "Electric Daisy Carnival Flower"
     :desc  ""
     :src   "/img/edc_flower.jpg"
-    :services #{:set}}
+    :tags  #{:set}}
 
    {:title "Electric Daisy Carnival Flower and Monster"
     :desc  ""
     :src   "/img/edc_show.jpg"
-    :services #{:set}}
+    :tags  #{:set}}
 
    {:title "Satanic Fire Pit"
     :desc  ""
     :src   "/img/fire_pit.jpg"
-    :services #{:sculpt :metal}}
+    :tags  #{:sculpt :metal}}
 
    {:title "Shelving for soda repair vans."
     :desc  ""
     :src   "/img/van_shelving.jpg"
-    :services #{:metal}}])
+    :tags  #{:metal}}])
 
+(defn tagged?
+ [tags media]
+ (subset? (set tags) (:tags media)))
