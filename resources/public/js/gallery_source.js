@@ -10,12 +10,12 @@ function fitDimensionsToRow( rowHeight, dim ){
 }
 
 // given the dimensions for an image, return it's aspect ratio.
-var getNormalizedRatios = dim => parseInt( dim[0] / dim[1] * 100);
+var getNormalizedRatios = ([w, h]) => parseInt( w / h * 100);
 
 // given the width of the gallery element and an array of image
 // dimensions, return the number of rows in the gallery.
 var findRowCount = function (galleryWidth, dims){
-  var summedWidth = _.reduce(dims, ((width, dim) => width + dim[0]), 0);
+  var summedWidth = _.reduce(dims, ((width, [w, h]) => width + w), 0);
   return Math.round( summedWidth / galleryWidth );
 }
 
