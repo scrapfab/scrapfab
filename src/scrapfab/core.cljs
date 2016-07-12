@@ -79,7 +79,7 @@
   [images]
   (reagent/create-class
     {:component-did-mount
-     (fn [owner] (js/gallery (reagent/dom-node owner)))
+     (fn [owner] (js/perfect_gallery (reagent/dom-node owner)))
      :reagent-render
      (fn [images]
       [:div.gallery

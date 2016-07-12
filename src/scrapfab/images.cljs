@@ -52,7 +52,7 @@
    {:title "Water Heater Spaceship"
     :desc  ""
     :src   "/img/spaceship.jpg"
-    :tags  #{:metal :prop}}
+    :tags  #{:metal :sculpt}}
 
    {:title "Bike Trailer"
     :desc  ""
