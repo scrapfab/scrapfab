@@ -69,12 +69,3 @@ body,
     box-sizing: border-box;
     padding: 0.25em;
 }
-
-.gallery-img {
-    width: 100%;
-}
-
-.gallery {
-    padding: 0.25em;
-    background: #222;
-}

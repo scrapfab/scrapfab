@@ -61,15 +61,30 @@
                :class "service-menu"]
    content])
 
+;; layout algorithm
+
+(extend-type js/HTMLCollection
+  ISeqable
+  (-seq [array] (array-seq array 0)))
+
+(defn image-size
+  [img]
+  [(.-clientWidth img)
+   (.-clientHeight img)])
+
+
 (defn gallery
   [images]
-  [:div.pure-g.gallery
-   (doall
-     (for [{:keys [src]} images]
-       ^{:key src}
-       [:div.pure-u-1-3.gallery-cell
-        [:img.gallery-img
-         {:src src}]]))])
+  (reagent/create-class
+    {:component-did-mount
+     (fn [owner] (js/gallery (reagent/dom-node owner)))
+     :reagent-render
+     (fn [images]
+      [:div.gallery
+      (doall
+        (for [{:keys [src]} images]
+          ^{:key src}
+          [:img.gallery-img {:src src}]))])}))
 
 (defn service-index
   [{:keys [images]}]
