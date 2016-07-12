@@ -19,7 +19,7 @@ function getNormalizedRatios(dim){
 // given the width of the gallery element and an array of image
 // dimensions, return the number of rows in the gallery.
 function findRowCount( galleryWidth, dims ) {
-    return Math.floor( _.reduce(dims, function(width, dim){
+    return Math.round( _.reduce(dims, function(width, dim){
         return width + dim[0];
     }, 0) / galleryWidth );
 }
@@ -42,13 +42,7 @@ function gallery( element ){
 
     var newGallery = document.createElement("div");
 
-    console.log(idealSizes);
-
-    var partitions = linear_partition(aspects, rowCount);
-
-    console.log(partitions);
-
-    for( var partition of partitions ){
+    for( var partition of linear_partition(aspects, rowCount) ){
 
         var imageMaps = _.map(partition, function(aspect){
            var index = _.indexOf(aspects, aspect);
@@ -67,20 +61,14 @@ function gallery( element ){
         });
 
         var rowWidth = _.reduce(imageMaps, function(width, img){ return width + img.width; }, 0);
-
-        console.log(rowWidth);
-
         var scaleFactor = idealRowWidth / rowWidth;
 
         var rowElement = document.createElement("div");
-
-        console.log(scaleFactor);
 
         for( var img of imageMaps ) {
             var image = img.image;
             image.width = img.width * scaleFactor;
             image.height = img.height * scaleFactor;
-            console.log(image);
             rowElement.appendChild(image);
         }
 

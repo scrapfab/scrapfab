@@ -70,8 +70,6 @@ body,
     padding: 0.25em;
 }
 
-img {
-    border: none;
-    padding: none;
-    margin: none;
+.gallery img {
+    vertical-align: bottom;
 }

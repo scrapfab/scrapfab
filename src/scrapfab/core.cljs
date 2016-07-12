@@ -72,7 +72,6 @@
   [(.-clientWidth img)
    (.-clientHeight img)])
 
-
 (defn gallery
   [images]
   (reagent/create-class

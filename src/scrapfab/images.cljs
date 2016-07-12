@@ -42,7 +42,17 @@
    {:title "Fire Stick"
     :desc ""
     :src "/img/fire_stick.jpg"
-    :tags #{:metal}}])
+    :tags #{:metal :prop}}
+
+   {:title "Water Heater Spaceship"
+    :desc  ""
+    :src   "/img/spaceship.jpg"
+    :tags  #{:metal :prop}}
+
+   {:title "Bike Trailer"
+    :desc  ""
+    :src   "/img/trailer.jpg"
+    :tags  #{:metal}}])
 
 (defn tagged?
  [tags media]
