@@ -50,7 +50,7 @@ function gallery( element ){
 
     for( var partition of partitions ){
 
-        var rowImages = _.map(partition, function(aspect){
+        var imageMaps = _.map(partition, function(aspect){
            var index = _.indexOf(aspects, aspect);
 
            _.pullAt(aspects, [index]);
@@ -58,22 +58,34 @@ function gallery( element ){
            var image = _.pullAt(images, [index])[0];
            var dims = _.pullAt(idealSizes, [index])[0];
 
-           image.width = dims[0];
-           image.height = dims[1];
 
-           return image;
+           return {
+            image: image,
+            width: dims[0],
+            height: dims[1]
+           };
         });
+
+        var rowWidth = _.reduce(imageMaps, function(width, img){ return width + img.width; }, 0);
+
+        console.log(rowWidth);
+
+        var scaleFactor = idealRowWidth / rowWidth;
 
         var rowElement = document.createElement("div");
 
-        for( var image of rowImages ) {
+        console.log(scaleFactor);
+
+        for( var img of imageMaps ) {
+            var image = img.image;
+            image.width = img.width * scaleFactor;
+            image.height = img.height * scaleFactor;
+            console.log(image);
             rowElement.appendChild(image);
         }
 
         newGallery.appendChild(rowElement);
     }
-
-    console.log(newGallery);
 
     element.removeAll();
     element.appendChild(newGallery);

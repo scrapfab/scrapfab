@@ -37,7 +37,12 @@
    {:title "Shelving for soda repair vans."
     :desc  ""
     :src   "/img/van_shelving.jpg"
-    :tags  #{:metal}}])
+    :tags  #{:metal}}
+
+   {:title "Fire Stick"
+    :desc ""
+    :src "/img/fire_stick.jpg"
+    :tags #{:metal}}])
 
 (defn tagged?
  [tags media]
