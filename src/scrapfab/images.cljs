@@ -9,7 +9,17 @@
 ;;   :sculpt - Sculpture
 
 (def images
-  [{:title "Police Car"
+  [{:title "Metal Railing for staircase"
+    :desc  ""
+    :src   "/img/curvy_railing.jpg"
+    :tags  #{:metal}}
+
+   {:title "Satanic Fire Pit"
+    :desc  ""
+    :src   "/img/fire_pit.jpg"
+    :tags  #{:sculpt :metal}}
+
+   {:title "Police Car"
     :desc  ""
     :src   "/img/cop_car.jpg"
     :tags  #{:prop}}
@@ -29,11 +39,6 @@
     :src   "/img/edc_show.jpg"
     :tags  #{:set}}
 
-   {:title "Satanic Fire Pit"
-    :desc  ""
-    :src   "/img/fire_pit.jpg"
-    :tags  #{:sculpt :metal}}
-
    {:title "Shelving for soda repair vans."
     :desc  ""
     :src   "/img/van_shelving.jpg"
@@ -52,7 +57,27 @@
    {:title "Bike Trailer"
     :desc  ""
     :src   "/img/trailer.jpg"
-    :tags  #{:metal}}])
+    :tags  #{:metal}}
+
+   {:title "Kicks USA Store Display"
+    :desc  ""
+    :src   "/img/kicks_1.jpg"
+    :tags  #{:set}}
+
+   {:title "Kicks USA Store Display"
+    :desc  ""
+    :src   "/img/kicks_2.jpg"
+    :tags  #{:set}}
+
+   {:title "Kicks USA Store Display"
+    :desc  ""
+    :src   "/img/kicks_3.jpg"
+    :tags  #{:set}}
+
+   {:title "NFL Hallway"
+    :desc  ""
+    :src   "/img/nfl_hallway_1.jpg"
+    :tags  #{:set}}])
 
 (defn tagged?
  [tags media]

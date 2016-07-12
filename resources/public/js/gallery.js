@@ -13,7 +13,7 @@ function fitDimensionsToRow( rowHeight, dim ){
 
 // given the dimensions for an image, return it's aspect ratio.
 function getNormalizedRatios(dim){
-    return dim[0] / dim[1] * 100;
+    return parseInt( dim[0] / dim[1] * 100 );
 }
 
 // given the width of the gallery element and an array of image
@@ -34,13 +34,16 @@ function gallery( element ){
     var sizes = _.map(images, getImageDimensions);
     var aspects = _.map(sizes, getNormalizedRatios);
 
-    var idealRowHeight = window.innerHeight / 2;
+    var idealRowHeight = parseInt(window.innerHeight / 2);
     var idealRowWidth = element.offsetWidth;
 
     var idealSizes = _.map(sizes, _.partial(fitDimensionsToRow, idealRowHeight));
     var rowCount = findRowCount(idealRowWidth, idealSizes);
 
     var newGallery = document.createElement("div");
+
+    console.log(aspects);
+    console.log(rowCount);
 
     for( var partition of linear_partition(aspects, rowCount) ){
 

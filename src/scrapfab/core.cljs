@@ -33,12 +33,15 @@
 
 (defn scrapfab-layout
   [& {:keys [content]}]
-  [:div.app
-   [:div.header
-    [navigation :items main-navigation
-                :brand [logo]
-                :class "main-menu"]]
-    content])
+  [:div.pure-g
+   [:div.pure-u-1-24]
+   [:div.pure-u-22-24
+     [:div.header
+      [navigation :items main-navigation
+                  :brand [logo]
+                  :class "main-menu"]]
+      content]
+   [:div.pure-u-1-24]])
 
 (defn about-page
   [_]
