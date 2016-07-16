@@ -77,7 +77,12 @@
    {:title "NFL Hallway"
     :desc  ""
     :src   "/img/nfl_hallway_1.jpg"
-    :tags  #{:set}}])
+    :tags  #{:set}}
+
+    {:title "See Saw"
+     :desc   ""
+     :src    "/img/see_saw.jpg"
+     :tags   #{:metal :prop}}])
 
 (defn tagged?
  [tags media]

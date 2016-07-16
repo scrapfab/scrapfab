@@ -63,8 +63,8 @@ function perfect_gallery(element){
     return part.map((weight) => {
       var image = selectImage(images, weight);
       var scaleFactor = rowHeight / image.height;
-      image.width *= scaleFactor;
-      image.height *= scaleFactor;
+      image.width = Math.floor(image.width * scaleFactor);
+      image.height = Math.floor(image.width * scaleFactor);
       return image;
     });
   });
