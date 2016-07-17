@@ -17,6 +17,7 @@
    {:title "Satanic Fire Pit"
     :desc  ""
     :src   "/img/fire_pit.jpg"
+    :rate  "5"
     :tags  #{:sculpt :metal}}
 
    {:title "Police Car"
@@ -32,6 +33,7 @@
    {:title "Electric Daisy Carnival Flower"
     :desc  ""
     :src   "/img/edc_flower.jpg"
+    :rate  4
     :tags  #{:set}}
 
    {:title "Electric Daisy Carnival Flower and Monster"
@@ -47,11 +49,13 @@
    {:title "Fire Stick"
     :desc ""
     :src "/img/fire_stick.jpg"
+    :rate 4
     :tags #{:metal :prop}}
 
    {:title "Water Heater Spaceship"
     :desc  ""
     :src   "/img/spaceship.jpg"
+    :rate  5
     :tags  #{:metal :sculpt}}
 
    {:title "Bike Trailer"
@@ -82,7 +86,8 @@
     {:title "See Saw"
      :desc   ""
      :src    "/img/see_saw.jpg"
-     :tags   #{:metal :prop}}])
+     :rate   5
+     :tags   #{:metal :prop :sculpt}}])
 
 (defn tagged?
  [tags media]

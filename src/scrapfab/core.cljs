@@ -83,8 +83,9 @@
      :reagent-render
      (fn [images]
       [:div.gallery
+      {:style {:display "hidden"}}
       (doall
-        (for [{:keys [src]} images]
+        (for [{:keys [src]} (sort-by :rate > images)]
           ^{:key src}
           [:img.gallery-img {:src src}]))])}))
 
@@ -124,7 +125,7 @@
                           :render service-page}
 
    "/services/set"       {:title  "Set Fabrication"
-                          :desc   desc/set
+                          :desc   desc/sets
                           :tags   [:set]
                           :render service-page}
 

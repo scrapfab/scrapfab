@@ -50,24 +50,35 @@ function selectImage(images, weight){
   return _.pullAt(images, [index])[0];
 }
 
-function perfect_gallery(element){
-  var images = _.map(element.querySelectorAll("img"), imageInfo);
-  var weights = _.map(images, imageWeight);
-
-  var rowWidth = element.offsetWidth;
-  var rowHeight = window.innerHeight / 2;
-
-  var rows = findIdealRowCount([rowWidth, rowHeight], images);
-
-  var layout = linear_partition(weights, rows).map((part) => {
-    return part.map((weight) => {
-      var image = selectImage(images, weight);
-      var scaleFactor = rowHeight / image.height;
-      image.width = Math.floor(image.width * scaleFactor);
-      image.height = Math.floor(image.width * scaleFactor);
-      return image;
-    });
+function waitLoad(image){
+  return new Promise(function(resolve, reject){
+    image.addEventListener("load", function(){
+      resolve(image);
+    })
   });
+}
 
-  render(element, rowWidth, layout);
+function perfect_gallery(element){
+  Promise.all(_.map(element.querySelectorAll("img"), waitLoad)).then(function(imgs){
+    var images = _.map(imgs, imageInfo);
+    var weights = _.map(images, imageWeight);
+
+    var rowWidth = element.offsetWidth;
+    var rowHeight = window.innerHeight / 2;
+
+    var rows = findIdealRowCount([rowWidth, rowHeight], images);
+
+    var layout = linear_partition(weights, rows).map((part) => {
+      return part.map((weight) => {
+        var image = selectImage(images, weight);
+        var scaleFactor = rowHeight / image.height;
+        image.width = Math.floor(image.width * scaleFactor);
+        image.height = Math.floor(image.height * scaleFactor);
+        return image;
+      });
+    });
+
+    render(element, rowWidth, layout);
+    element.style.display = "block";
+  })
 }
