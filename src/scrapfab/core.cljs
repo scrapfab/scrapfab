@@ -66,10 +66,6 @@
 
 ;; layout algorithm
 
-(extend-type js/HTMLCollection
-  ISeqable
-  (-seq [array] (array-seq array 0)))
-
 (defn image-size
   [img]
   [(.-clientWidth img)
@@ -143,8 +139,9 @@
   [site]
   [render-url site @current-url])
 
-(reagent/render-component [render-site scrapfab]
-                          (. js/document (getElementById "app")))
+;(when (some? js/document)
+; (reagent/render-component [render-site scrapfab]
+;                           (. js/document (getElementById "app"))))
 
 
 (defn on-js-reload []
