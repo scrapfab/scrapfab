@@ -9,13 +9,14 @@
 
 (defonce fs (nodejs/require "fs"))
 (defonce file-path (nodejs/require "path"))
+(defonce mkdirp (nodejs/require "mkdirp"))
 
 (defn url->path
   "Converts the url of a page to a filename, relative to the root
   directory of the site."
   [url]
   (str "build"
-       (clojure.string/join "_" (clojure.string/split url "/"))
+       (clojure.string/join "/" (clojure.string/split url "/"))
        ".html"))
 
 (defn tagged-media?
@@ -45,7 +46,9 @@
   to the file system."
   [url html]
   (let [path (url->path url)]
-    (.writeFileSync fs path html)))
+    (.mkdirp mkdirp
+             (.dirname file-path path)
+             #(.writeFileSync fs path html))))
 
 (defn -main [& args]
   (let [{:keys [site-map layout media-library]} core/scrapfab]
