@@ -32,14 +32,22 @@
   [{:keys [tags] :as page} media-library]
   (filter #(tagged-media? tags %) media-library))
 
+(defn root-layout
+  [body]
+  [:html
+    [:head]
+    [:body
+     body]])
+
 (defn render-page
   "Given a site-map page value as the first argument and a seq of
   media associated with the page as its second argument, return the
   rendered body HTML of the page."
   [layout url {:keys [render] :as page} media]
   (reagent/render-to-string
-   [layout url
-    [render url (dissoc page :render :tags) media]]))
+   [root-layout
+    [layout url
+     [render url (dissoc page :render :tags) media]]]))
 
 (defn write-page!
   "Given a URL and the rendered HTML for that URL, write the webpage
