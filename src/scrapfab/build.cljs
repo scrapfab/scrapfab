@@ -8,6 +8,7 @@
 (nodejs/enable-util-print!)
 
 (defonce fs (nodejs/require "fs"))
+(defonce file-path (nodejs/require "path"))
 
 (defn url->path
   "Converts the url of a page to a filename, relative to the root
@@ -44,8 +45,6 @@
   to the file system."
   [url html]
   (let [path (url->path url)]
-    (println path)
-    (println html)
     (.writeFileSync fs path html)))
 
 (defn -main [& args]
