@@ -1,5 +1,9 @@
-(ns scrapfab.menu
-  (:require [scrapfab.spa :refer [sub-url? current-url set-url!]]))
+(ns scrapfab.menu)
+
+(defn sub-url?
+  [parent-url url]
+  (when-let [m (.exec (js/RegExp url) parent-url)]
+    (= (.-index m) 0)))
 
 (defn class-opts
   [class]
@@ -46,13 +50,11 @@
           (label-fn item)]]))]])
 
 (defn navigation
-  [& {:keys [items class brand]}]
+  [& {:keys [current-url items class brand]}]
   [horizontal-menu :items items
                    :class class
                    :brand brand
-                   :current-id @current-url
+                   :current-id current-url
                    :id-fn :url
                    :url-fn :url
-                   :selected-fn (fn [item] (sub-url? @current-url (:url item)))
-                   :on-change (fn [item]
-                                (set-url! (:url item)))])
+                   :selected-fn (fn [item] (sub-url? current-url (:url item)))])

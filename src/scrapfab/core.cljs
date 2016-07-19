@@ -1,6 +1,5 @@
 (ns scrapfab.core
   (:require [scrapfab.menu :refer [navigation]]
-            [scrapfab.spa :refer [current-url set-url!]]
 
             [scrapfab.images :as images :refer [tagged?]]
             [scrapfab.desc :as desc]
@@ -8,17 +7,6 @@
             [reagent.core :as reagent :refer [atom]]))
 
 (enable-console-print!)
-
-;; ---- app wiring ----
-
-(defn render-url
-  [{:keys [site-map layout media]} url]
-  (let [{:keys [render tags] :as page} (get site-map url)
-        images (filter #(tagged? tags %) media)
-        page   (assoc (dissoc page :render) :images images)]
-    [layout :content [render page]]))
-
-;; ---- scrapfab ----
 
 (defn logo
   []
@@ -32,23 +20,24 @@
    {:url "/contact" :label "Contact"}])
 
 (defn scrapfab-layout
-  [& {:keys [content]}]
+  [current-url body]
   [:div.pure-g
    [:div.pure-u-1-24]
    [:div.pure-u-22-24
      [:div.header
       [navigation :items main-navigation
                   :brand [logo]
+                  :current-url current-url
                   :class "main-menu"]]
-      content]
+      body]
    [:div.pure-u-1-24]])
 
 (defn about-page
-  [_]
+  [url _ media]
   [:div "about us"])
 
 (defn contact-page
-  [_]
+  [url _ media]
   [:div "contact us"])
 
 (def service-navigation
@@ -58,18 +47,12 @@
    {:url "/services/sculpture" :label "Sculpture"}])
 
 (defn service-layout
-  [& {:keys [content]}]
+  [url body]
   [:div
    [navigation :items service-navigation
+               :current-url url
                :class "service-menu"]
-   content])
-
-;; layout algorithm
-
-(defn image-size
-  [img]
-  [(.-clientWidth img)
-   (.-clientHeight img)])
+   body])
 
 (defn gallery
   [images]
@@ -86,19 +69,19 @@
           [:img.gallery-img {:src src}]))])}))
 
 (defn service-index
-  [{:keys [images]}]
+  [url _ media]
   [service-layout :content
    [:div
     [:h1 "We provide all the services"]
-    [gallery images]]])
+    [gallery media]]])
 
 (defn service-page
-  [{:keys [title images desc]}]
-  [service-layout :content
+  [url {:keys [title desc]} media]
+  [service-layout url
    [:div
     [:h1 title]
     [:p desc]
-    [gallery images]]])
+    [gallery media]]])
 
 (def site-map
   {"/about"              {:title  "About"
@@ -133,19 +116,4 @@
 (def scrapfab
   {:layout scrapfab-layout
    :site-map site-map
-   :media images/images})
-
-(defn render-site
-  [site]
-  [render-url site @current-url])
-
-;(when (some? js/document)
-; (reagent/render-component [render-site scrapfab]
-;                           (. js/document (getElementById "app"))))
-
-
-(defn on-js-reload []
-  ;; optionally touch your app-state to force rerendering depending on
-  ;; your application
-  ;; (swap! app-state update-in [:__figwheel_counter] inc)
-)
+   :media-library images/images})
