@@ -118,3 +118,14 @@
   {:layout scrapfab-layout
    :site-map site-map
    :media-library images/images})
+
+(def stylesheets
+  ["/css/muncie.css"
+   "http://yui.yahooapis.com/pure/0.6.0/pure-min.css"
+   "/css/style.css"])
+
+(def javascripts
+  ["https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.13.1/lodash.js"
+   "https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.9.1/polyfill.min.js"
+   "/js/linear_partition.js"
+   "/js/perfect_gallery.js"])

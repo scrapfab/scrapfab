@@ -10,6 +10,7 @@
 (defonce fs (nodejs/require "fs"))
 (defonce file-path (nodejs/require "path"))
 (defonce mkdirp (nodejs/require "mkdirp"))
+(defonce ncp (nodejs/require "ncp"))
 
 (defn url->path
   "Converts the url of a page to a filename, relative to the root
@@ -33,11 +34,26 @@
   (filter #(tagged-media? tags %) media-library))
 
 (defn root-layout
-  [body]
+  [body stylesheets javascripts]
   [:html
-    [:head]
+    [:head
+     (doall
+       (map (fn [style]
+              ^{:key style}
+              [:link
+               {:rel  "stylesheet"
+                :type "text/css"
+                :href style}])
+            core/stylesheets))]
     [:body
-     body]])
+     [:div#app body]
+     (doall
+       (map (fn [js]
+              ^{:key js}
+              [:script
+               {:type "text/javascript"
+                :src  js}])
+            core/javascripts))]])
 
 (defn render-page
   "Given a site-map page value as the first argument and a seq of
@@ -73,6 +89,7 @@
 
 (defn -main [& args]
   (let [{:keys [site-map layout media-library]} core/scrapfab]
+    (ncp "resources/public" "build")
     (doseq [[url page] (normalize-indexes site-map)]
       (let [media (page-media page media-library)
             html  (render-page layout url page media)]

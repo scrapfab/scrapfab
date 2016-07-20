@@ -59,8 +59,7 @@ function waitLoad(image){
 }
 
 function perfect_gallery(element){
-  Promise.all(_.map(element.querySelectorAll("img"), waitLoad)).then(function(imgs){
-    var images = _.map(imgs, imageInfo);
+    var images = _.map(element.querySelectorAll("img"), imageInfo);
     var weights = _.map(images, imageWeight);
 
     var rowWidth = element.offsetWidth;
@@ -80,5 +79,8 @@ function perfect_gallery(element){
 
     render(element, rowWidth, layout);
     element.style.display = "block";
-  })
+}
+
+for( let gallery of document.querySelectorAll(".gallery") ){
+  perfect_gallery(gallery);
 }

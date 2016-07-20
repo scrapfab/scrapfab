@@ -128,26 +128,49 @@ function waitLoad(image) {
 }
 
 function perfect_gallery(element) {
-  Promise.all(_.map(element.querySelectorAll("img"), waitLoad)).then(function (imgs) {
-    var images = _.map(imgs, imageInfo);
-    var weights = _.map(images, imageWeight);
+  var images = _.map(element.querySelectorAll("img"), imageInfo);
+  var weights = _.map(images, imageWeight);
 
-    var rowWidth = element.offsetWidth;
-    var rowHeight = window.innerHeight / 2;
+  var rowWidth = element.offsetWidth;
+  var rowHeight = window.innerHeight / 2;
 
-    var rows = findIdealRowCount([rowWidth, rowHeight], images);
+  var rows = findIdealRowCount([rowWidth, rowHeight], images);
 
-    var layout = linear_partition(weights, rows).map(function (part) {
-      return part.map(function (weight) {
-        var image = selectImage(images, weight);
-        var scaleFactor = rowHeight / image.height;
-        image.width = Math.floor(image.width * scaleFactor);
-        image.height = Math.floor(image.height * scaleFactor);
-        return image;
-      });
+  var layout = linear_partition(weights, rows).map(function (part) {
+    return part.map(function (weight) {
+      var image = selectImage(images, weight);
+      var scaleFactor = rowHeight / image.height;
+      image.width = Math.floor(image.width * scaleFactor);
+      image.height = Math.floor(image.height * scaleFactor);
+      return image;
     });
-
-    render(element, rowWidth, layout);
-    element.style.display = "block";
   });
+
+  render(element, rowWidth, layout);
+  element.style.display = "block";
+}
+
+var _iteratorNormalCompletion3 = true;
+var _didIteratorError3 = false;
+var _iteratorError3 = undefined;
+
+try {
+  for (var _iterator3 = document.querySelectorAll(".gallery")[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+    var gallery = _step3.value;
+
+    perfect_gallery(gallery);
+  }
+} catch (err) {
+  _didIteratorError3 = true;
+  _iteratorError3 = err;
+} finally {
+  try {
+    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+      _iterator3.return();
+    }
+  } finally {
+    if (_didIteratorError3) {
+      throw _iteratorError3;
+    }
+  }
 }
