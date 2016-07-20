@@ -58,9 +58,22 @@
              (.dirname file-path path)
              #(.writeFileSync fs path html))))
 
+(defn normalize-indexes
+  "Given a site-map, return a sequence of [url page] entries with all index
+  page urls explicitely referencing an index.html file."
+  [site-map]
+  (map (fn [[url page]]
+         (if (:index? page)
+           [(str (clojure.string/join "/"
+                  (clojure.string/split url "/"))
+                  "/index")
+            (dissoc page :index?)]
+           [url page]))
+       site-map))
+
 (defn -main [& args]
   (let [{:keys [site-map layout media-library]} core/scrapfab]
-    (doseq [[url page] site-map]
+    (doseq [[url page] (normalize-indexes site-map)]
       (let [media (page-media page media-library)
             html  (render-page layout url page media)]
         (write-page! url html)))))

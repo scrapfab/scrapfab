@@ -91,7 +91,8 @@
                           :render contact-page}
 
    "/services"           {:title  "Services"
-                          :render service-index}
+                          :render service-index
+                          :index? true}
 
    "/services/metal"     {:title  "Metal Fabrication"
                           :desc   desc/metal
