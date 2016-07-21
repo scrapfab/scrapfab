@@ -1,7 +1,6 @@
 (ns scrapfab.build
   (:require [cljs.nodejs :as nodejs]
             [reagent.core :as reagent]
-            [clojure.set :refer [subset?]]
 
             [scrapfab.core :as core]))
 
@@ -19,19 +18,6 @@
   (str "build"
        (clojure.string/join "/" (clojure.string/split url "/"))
        ".html"))
-
-(defn tagged-media?
-  "Returns true if all tags in given as the first argument are associated
-  with the media given as the second argument."
-  [tags media]
-  (subset? (set tags) (:tags media)))
-
-(defn page-media
-  "Given a site-map page value as the first argument and a seq of
-  media as the first argument, return a seq of media associated with
-  that page."
-  [{:keys [tags] :as page} media-library]
-  (filter #(tagged-media? tags %) media-library))
 
 (defn root-layout
   [body stylesheets javascripts]
@@ -59,11 +45,11 @@
   "Given a site-map page value as the first argument and a seq of
   media associated with the page as its second argument, return the
   rendered body HTML of the page."
-  [layout url {:keys [render] :as page} media]
+  [layout url {:keys [render] :as page} media-library]
   (reagent/render-to-string
    [root-layout
     [layout url
-     [render url (dissoc page :render :tags) media]]]))
+     [render url (dissoc page :render) media-library]]]))
 
 (defn write-page!
   "Given a URL and the rendered HTML for that URL, write the webpage
@@ -91,8 +77,7 @@
   (let [{:keys [site-map layout media-library]} core/scrapfab]
     (ncp "resources/public" "build")
     (doseq [[url page] (normalize-indexes site-map)]
-      (let [media (page-media page media-library)
-            html  (render-page layout url page media)]
+      (let [html  (render-page layout url page media-library)]
         (write-page! url html)))))
 
 (set! *main-cli-fn* -main)

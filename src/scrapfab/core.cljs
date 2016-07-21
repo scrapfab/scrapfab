@@ -57,19 +57,19 @@
    body])
 
 (defn service-index
-  [url _ media]
+  [url _ media-library]
   [service-layout :content
    [:div
     [:h1 "We provide all the services"]
-    [gallery media]]])
+    [gallery media-library]]])
 
 (defn service-page
-  [url {:keys [title desc]} media]
+  [tags url {:keys [title desc]} media-library]
   [service-layout url
    [:div
     [:h1 title]
     [:p desc]
-    [gallery media]]])
+    [gallery media-library tags]]])
 
 (def site-map
   {"/about"              {:title  "About"
@@ -84,23 +84,22 @@
 
    "/services/metal"     {:title  "Metal Fabrication"
                           :desc   desc/metal
-                          :tags   [:metal]
-                          :render service-page}
+                          :render (partial service-page [:metal])}
 
    "/services/prop"      {:title  "Prop Fabrication"
                           :desc   desc/prop
                           :tags   [:prop]
-                          :render service-page}
+                          :render (partial service-page [:prop])}
 
    "/services/set"       {:title  "Set Fabrication"
                           :desc   desc/sets
                           :tags   [:set]
-                          :render service-page}
+                          :render (partial service-page [:set])}
 
    "/services/sculpture" {:title  "Sculpture"
                           :desc   desc/sculpt
                           :tags   [:sculpt]
-                          :render service-page}})
+                          :render (partial service-page [:sculpt])}})
 
 (def scrapfab
   {:layout scrapfab-layout
