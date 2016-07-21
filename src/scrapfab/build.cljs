@@ -1,6 +1,7 @@
 (ns scrapfab.build
   (:require [cljs.nodejs :as nodejs]
             [reagent.core :as reagent]
+            [clojure.string :refer [join split]]
 
             [scrapfab.core :as core]))
 
@@ -16,7 +17,7 @@
   directory of the site."
   [url]
   (str "build"
-       (clojure.string/join "/" (clojure.string/split url "/"))
+       (join "/" (split url "/"))
        ".html"))
 
 (defn root-layout
@@ -66,8 +67,8 @@
   [site-map]
   (map (fn [[url page]]
          (if (:index? page)
-           [(str (clojure.string/join "/"
-                  (clojure.string/split url "/"))
+           [(str (join "/"
+                  (split url "/"))
                   "/index")
             (dissoc page :index?)]
            [url page]))

@@ -1,12 +1,4 @@
-(ns scrapfab.images
- (:require [clojure.set :refer [subset?]]))
-
-;; Possible image types:
-;;
-;;   :metal  - Metal Fabrication
-;;   :set    - Set Design
-;;   :prop   - Prop Fabrication
-;;   :sculpt - Sculpture
+(ns scrapfab.images)
 
 (def images
   [{:title "Metal Railing for staircase"
@@ -88,7 +80,3 @@
      :src    "/img/see_saw.jpg"
      :rate   5
      :tags   #{:metal :prop :sculpt}}])
-
-(defn tagged?
- [tags media]
- (subset? (set tags) (:tags media)))
