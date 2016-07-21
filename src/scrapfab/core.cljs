@@ -3,6 +3,7 @@
 
             [scrapfab.images :as images :refer [tagged?]]
             [scrapfab.desc :as desc]
+            [scrapfab.gallery :refer [gallery]]
 
             [clojure.string :refer [join]]
             [reagent.core :as reagent :refer [atom]]))
@@ -54,15 +55,6 @@
                :current-url url
                :class "service-menu"]
    body])
-
-(defn gallery
-  [images]
-  [:div.gallery
-   {:data-photos
-     (->> images
-          (sort-by :rate >)
-          (map :src)
-          (join " "))}])
 
 (defn service-index
   [url _ media]
