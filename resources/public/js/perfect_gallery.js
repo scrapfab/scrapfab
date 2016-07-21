@@ -3,8 +3,8 @@
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 function imageInfo(img) {
-  var w = img.offsetWidth;
-  var h = img.offsetHeight;
+  var w = img.width;
+  var h = img.height;
 
   return {
     element: img,
@@ -119,35 +119,44 @@ function selectImage(images, weight) {
   return _.pullAt(images, [index])[0];
 }
 
-function waitLoad(image) {
-  return new Promise(function (resolve, reject) {
-    image.addEventListener("load", function () {
-      resolve(image);
+function preload(url) {
+  var img = document.createElement("img");
+
+  var promise = new Promise(function (resolve, reject) {
+    img.addEventListener("load", function () {
+      resolve(img);
     });
   });
+
+  img.src = url;
+
+  return promise;
 }
 
 function perfect_gallery(element) {
-  var images = _.map(element.querySelectorAll("img"), imageInfo);
-  var weights = _.map(images, imageWeight);
+  var photoURLs = element.getAttribute("data-photos").split(" ");
 
-  var rowWidth = element.offsetWidth;
-  var rowHeight = window.innerHeight / 2;
+  Promise.all(_.map(photoURLs, preload)).then(function (imgs) {
+    var images = _.map(imgs, imageInfo);
+    var weights = _.map(images, imageWeight);
 
-  var rows = findIdealRowCount([rowWidth, rowHeight], images);
+    var rowWidth = element.offsetWidth;
+    var rowHeight = window.innerHeight / 2;
 
-  var layout = linear_partition(weights, rows).map(function (part) {
-    return part.map(function (weight) {
-      var image = selectImage(images, weight);
-      var scaleFactor = rowHeight / image.height;
-      image.width = Math.floor(image.width * scaleFactor);
-      image.height = Math.floor(image.height * scaleFactor);
-      return image;
+    var rows = findIdealRowCount([rowWidth, rowHeight], images);
+
+    var layout = linear_partition(weights, rows).map(function (part) {
+      return part.map(function (weight) {
+        var image = selectImage(images, weight);
+        var scaleFactor = rowHeight / image.height;
+        image.width = Math.floor(image.width * scaleFactor);
+        image.height = Math.floor(image.height * scaleFactor);
+        return image;
+      });
     });
-  });
 
-  render(element, rowWidth, layout);
-  element.style.display = "block";
+    render(element, rowWidth, layout);
+  });
 }
 
 var _iteratorNormalCompletion3 = true;

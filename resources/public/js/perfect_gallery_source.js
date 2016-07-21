@@ -1,6 +1,6 @@
 function imageInfo(img){
-  let w = img.offsetWidth;
-  let h = img.offsetHeight;
+  let w = img.width;
+  let h = img.height;
 
   return {
     element: img,
@@ -50,35 +50,44 @@ function selectImage(images, weight){
   return _.pullAt(images, [index])[0];
 }
 
-function waitLoad(image){
-  return new Promise(function(resolve, reject){
-    image.addEventListener("load", function(){
-      resolve(image);
+function preload(url){
+  var img = document.createElement("img");
+
+  var promise = new Promise(function(resolve, reject){
+    img.addEventListener("load", function(){
+      resolve(img);
     })
   });
+
+  img.src = url;
+
+  return promise;
 }
 
 function perfect_gallery(element){
-    var images = _.map(element.querySelectorAll("img"), imageInfo);
-    var weights = _.map(images, imageWeight);
+    var photoURLs = element.getAttribute("data-photos").split(" ");
 
-    var rowWidth = element.offsetWidth;
-    var rowHeight = window.innerHeight / 2;
+    Promise.all(_.map(photoURLs, preload)).then(function(imgs){
+      var images = _.map(imgs, imageInfo);
+      var weights = _.map(images, imageWeight);
 
-    var rows = findIdealRowCount([rowWidth, rowHeight], images);
+      var rowWidth = element.offsetWidth;
+      var rowHeight = window.innerHeight / 2;
 
-    var layout = linear_partition(weights, rows).map((part) => {
-      return part.map((weight) => {
-        var image = selectImage(images, weight);
-        var scaleFactor = rowHeight / image.height;
-        image.width = Math.floor(image.width * scaleFactor);
-        image.height = Math.floor(image.height * scaleFactor);
-        return image;
+      var rows = findIdealRowCount([rowWidth, rowHeight], images);
+
+      var layout = linear_partition(weights, rows).map((part) => {
+        return part.map((weight) => {
+          var image = selectImage(images, weight);
+          var scaleFactor = rowHeight / image.height;
+          image.width = Math.floor(image.width * scaleFactor);
+          image.height = Math.floor(image.height * scaleFactor);
+          return image;
+        });
       });
-    });
 
-    render(element, rowWidth, layout);
-    element.style.display = "block";
+      render(element, rowWidth, layout);
+    });
 }
 
 for( let gallery of document.querySelectorAll(".gallery") ){

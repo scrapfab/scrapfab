@@ -4,6 +4,7 @@
             [scrapfab.images :as images :refer [tagged?]]
             [scrapfab.desc :as desc]
 
+            [clojure.string :refer [join]]
             [reagent.core :as reagent :refer [atom]]))
 
 (enable-console-print!)
@@ -56,17 +57,12 @@
 
 (defn gallery
   [images]
-  (reagent/create-class
-    {:component-did-mount
-     (fn [owner] (js/perfect_gallery (reagent/dom-node owner)))
-     :reagent-render
-     (fn [images]
-      [:div.gallery
-      {:style {:display "hidden"}}
-      (doall
-        (for [{:keys [src]} (sort-by :rate > images)]
-          ^{:key src}
-          [:img.gallery-img {:src src}]))])}))
+  [:div.gallery
+   {:data-photos
+     (->> images
+          (sort-by :rate >)
+          (map :src)
+          (join " "))}])
 
 (defn service-index
   [url _ media]
