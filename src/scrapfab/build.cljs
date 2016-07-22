@@ -2,7 +2,7 @@
   (:require [cljs.nodejs :as nodejs]
             [reagent.core :as reagent]
             [clojure.string :refer [join split]]
-
+            [cljs.reader :refer [read-string]]
             [scrapfab.core :as core]))
 
 (nodejs/enable-util-print!)
@@ -67,15 +67,21 @@
   [site-map]
   (map (fn [[url page]]
          (if (:index? page)
-           [(str (join "/"
-                  (split url "/"))
-                  "/index")
+           [(join "/"
+                  (concat (split url "/")
+                          ["/index"]))
             (dissoc page :index?)]
            [url page]))
        site-map))
 
+(defn load-media-library
+  []
+  (let [source (.readFileSync fs "meta/media.edn")]
+    (read-string (.toString source))))
+
 (defn -main [& args]
-  (let [{:keys [site-map layout media-library]} core/scrapfab]
+  (let [{:keys [site-map layout]} core/scrapfab
+        media-library (load-media-library)]
     (ncp "resources/public" "build")
     (doseq [[url page] (normalize-indexes site-map)]
       (let [html  (render-page layout url page media-library)]

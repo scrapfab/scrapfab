@@ -6,7 +6,8 @@
   "Returns true if all tags in given as the first argument are associated
   with the media given as the second argument."
   [tags media]
-  (subset? (set tags) (:tags media)))
+  (println tags)
+  (subset? (set tags) (:tags (second media))))
 
 (defn gallery
   ([media-library]
@@ -15,6 +16,6 @@
   [:div.gallery
    {:data-photos (->> media-library
                       (filter #(tagged-media? tags %))
-                      (sort-by :rate >)
-                      (map :src)
+                      (sort-by (comp :rate second) >)
+                      (map first)
                       (join " "))}]))

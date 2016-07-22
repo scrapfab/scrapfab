@@ -1,7 +1,6 @@
 (ns scrapfab.core
   (:require [scrapfab.menu :refer [navigation]]
 
-            [scrapfab.images :as images :refer [tagged?]]
             [scrapfab.desc :as desc]
             [scrapfab.gallery :refer [gallery]]
 
@@ -88,23 +87,19 @@
 
    "/services/prop"      {:title  "Prop Fabrication"
                           :desc   desc/prop
-                          :tags   [:prop]
                           :render (partial service-page [:prop])}
 
    "/services/set"       {:title  "Set Fabrication"
                           :desc   desc/sets
-                          :tags   [:set]
                           :render (partial service-page [:set])}
 
    "/services/sculpture" {:title  "Sculpture"
                           :desc   desc/sculpt
-                          :tags   [:sculpt]
                           :render (partial service-page [:sculpt])}})
 
 (def scrapfab
   {:layout scrapfab-layout
-   :site-map site-map
-   :media-library images/images})
+   :site-map site-map})
 
 (def stylesheets
   ["/css/muncie.css"
