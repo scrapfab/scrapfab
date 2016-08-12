@@ -3,7 +3,7 @@
             [reagent.core :as reagent]
             [clojure.string :refer [join split]]
             [cljs.reader :refer [read-string]]
-            [scrapfab.core :as core]))
+            [scrapfab.site :as core]))
 
 (nodejs/enable-util-print!)
 
@@ -47,10 +47,11 @@
   media associated with the page as its second argument, return the
   rendered body HTML of the page."
   [layout url {:keys [render] :as page} media-library]
-  (reagent/render-to-string
+  (str "<!DOCTYPE html>\n"
+   (reagent/render-to-string
    [root-layout
     [layout url
-     [render url (dissoc page :render) media-library]]]))
+     [render url (dissoc page :render) media-library]]])))
 
 (defn write-page!
   "Given a URL and the rendered HTML for that URL, write the webpage

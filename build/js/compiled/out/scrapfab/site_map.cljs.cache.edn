@@ -1,0 +1,2 @@
+;; Analyzed by ClojureScript 1.8.51
+{:name scrapfab.site-map, :doc nil, :excludes #{}, :use-macros nil, :require-macros nil, :uses {current-url scrapfab.spa, sub-url? scrapfab.spa, set-url! scrapfab.spa}, :requires {scrapfab.spa scrapfab.spa}, :imports nil}

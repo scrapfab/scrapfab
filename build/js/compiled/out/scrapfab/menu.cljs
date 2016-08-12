@@ -40,7 +40,6 @@
         ^{:key (id-fn item)}
         [:li.pure-menu-item
          (class-opts (str class
-                          "-item"
                           (when (selected-fn item)
                             " pure-menu-selected")))
          [:a.pure-menu-link
