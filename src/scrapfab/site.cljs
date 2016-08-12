@@ -9,22 +9,36 @@
 
 (defn logo
   []
-  [:div.logo
-   [:span.logo-scrap "scrap"]
-   [:span.logo-fab "fab"]])
+  [:img.logo {:src "/img/toolbox.svg"}])
 
 (def main-navigation
   [{:url "/about" :label "About"}
    {:url "/services" :label "Services"}
    {:url "/contact" :label "Contact"}])
 
+(defn who-we-are
+  []
+  [:div
+  [:h1.site-heading "Who we are"]
+  [:div.pure-g
+   [:div.pure-u-1-2.profile
+     [:img.profile-picture {:src "/img/good_deal.jpg"}]
+     [:h2.profile-name "Good Deal Neil"]]
+   [:div.pure-u-1-2.profile
+     [:img.profile-picture {:src "/img/dmitry.jpg"}]
+     [:h2.profile-name "Dmitry Kolobov"]]]])
+
 (defn scrapfab-layout
   [current-url body]
   [:div.pure-g
    [:div.pure-u-1-24]
    [:div.pure-u-22-24
+    [logo]
+    [:p.text-center
+     "Custom fabricators working to make fantasies real."]
     [:h1.site-heading "Our Work"]
-    body]
+    body
+    [who-we-are]]
    [:div.pure-u-1-24]])
 
 (def service-navigation
