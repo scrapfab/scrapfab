@@ -6,7 +6,6 @@
   "Returns true if all tags in given as the first argument are associated
   with the media given as the second argument."
   [tags media]
-  (println tags)
   (subset? (set tags) (:tags (second media))))
 
 (defn gallery

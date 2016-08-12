@@ -24,9 +24,12 @@
                 :source-paths ["src"]
                 :compiler {
                   :main scrapfab.build
+                  :output-to "target/node.js"
+                  :output-dir "target/node"
                   :target :nodejs
-                  :optimizations :simple
+                  :optimizations :none
                   :pretty-print true
+                  :cache-analysis true
                   }}
                {:id "dev"
                 :source-paths ["src"]

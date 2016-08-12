@@ -1,9 +1,13 @@
 (ns scrapfab.build
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [cljs.nodejs :as nodejs]
+            [cljs.core.async :as async]
+            [cljs.pprint :refer [pprint]]
             [reagent.core :as reagent]
             [clojure.string :refer [join split]]
             [cljs.reader :refer [read-string]]
-            [scrapfab.site :as core]))
+            [scrapfab.site :as core]
+            [scrapfab.media :as media]))
 
 (nodejs/enable-util-print!)
 
@@ -11,6 +15,7 @@
 (defonce file-path (nodejs/require "path"))
 (defonce mkdirp (nodejs/require "mkdirp"))
 (defonce ncp (nodejs/require "ncp"))
+(defonce gm (nodejs/require "gm"))
 
 (defn url->path
   "Converts the url of a page to a filename, relative to the root
@@ -78,6 +83,8 @@
 (defn load-media-library
   []
   (let [source (.readFileSync fs "meta/media.edn")]
+    (go
+      (pprint (async/<! (media/load-library!))))
     (read-string (.toString source))))
 
 (defn -main [& args]

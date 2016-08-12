@@ -35,7 +35,7 @@
    [:div.pure-u-22-24
     [logo]
     [:p.text-center
-     "Custom fabricators working to make fantasies real."]
+     "Custom fabricators making fantasies come alive."]
     [:h1.site-heading "Our Work"]
     body
     [who-we-are]]

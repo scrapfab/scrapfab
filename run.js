@@ -1,1 +1,2 @@
-require('./target/cljsbuild-main.js');
+require('./target/node/goog/bootstrap/nodejs')
+require('./target/node.js')
