@@ -4,24 +4,19 @@ function findIdealRowCount([idealWidth, idealHeight], images){
   }, 0) / idealWidth);
 }
 
-Element.prototype.removeAll = function () {
-  while (this.firstChild) { this.removeChild(this.firstChild); }
-  return this;
-};
-
-let sumWidth = row => _.reduce(row, ((total, {width}) => total + width), 0)
+let sumWidth = row => _.reduce(row, ((total, [url, {width}]) => total + width), 0)
 
 let render = (galleryElement, rowWidth, layout) => {
   let container = document.createElement("div");
 
   for(let row of layout){
-    var rowElement = document.createElement("div");
-    var scaleFactor = rowWidth / sumWidth(row);
+    let rowElement = document.createElement("div");
+    let scaleFactor = rowWidth / sumWidth(row);
 
     rowElement.className = "gallery-row";
 
-    for(let {url, width, height} of row){
-      var element = document.createElement("div");
+    for(let [url, {width, height}] of row){
+      let element = document.createElement("div");
       let img = document.createElement("img");
 
       img.src = "img/" + url;
@@ -38,43 +33,51 @@ let render = (galleryElement, rowWidth, layout) => {
     container.appendChild(rowElement);
   }
 
-  galleryElement.removeAll();
   galleryElement.appendChild(container);
 }
 
-function weight(aspect){ return parseInt(aspect * 100); }
+function weight([url, {aspect}]){ return parseInt(aspect * 100); }
 
-function selectMedia(media, w){
-  let index = _.findIndex(media, (([url, {aspect}]) => {
-    console.log(aspect, w);
-    return weight(aspect) == w
-  }));
+function weight_cache(media){
+  var cache = _.groupBy(media, weight);
 
-  return _.pullAt(media, [index])[0];
+  return ((w) => {
+    let item = cache[w][0];
+    cache[w] = _.drop(cache[w]);
+    return item;
+  });
+}
+
+function perfect_layout(gallery_width, gallery_height, media){
+  let row_width = gallery_width;
+  let row_height = gallery_height / 2;
+
+  let rows = findIdealRowCount([row_width, row_height], media);
+  let partition = linear_partition(_.map(media, weight), rows);
+
+  let cache = weight_cache(media);
+
+  return partition.map((part) => {
+    return part.map((w) => {
+      let item = cache(w);
+      let [url, m] = item;
+      let scale = row_height / m.height;
+
+      return [url, _.merge(m, {
+        width: m.width * scale,
+        height: m.height * scale
+      })];
+    })
+  })
 }
 
 function perfect_gallery(element){
     var media = _.toPairs(JSON.parse(element.getAttribute("data-photos")));
-    var rowWidth = element.offsetWidth;
-    var rowHeight = window.innerHeight / 2;
+    var gallery_width = element.offsetWidth;
+    var gallery_height = window.innerHeight;
+    var layout = perfect_layout(gallery_width, gallery_height, media);
 
-    var rows = findIdealRowCount([rowWidth, rowHeight], media);
-
-    var partition = linear_partition(_.map(media, ([url, {aspect}]) => weight(aspect)), rows)
-
-    var layout = partition.map((part) => {
-      return part.map((wt) => {
-        var [url, {width, height, title}] = selectMedia(media, wt);
-        var scale = rowHeight / height;
-        return {
-          width: width * scale,
-          height: height * scale,
-          url: url,
-          title: title}
-      });
-    });
-
-    render(element, rowWidth, layout);
+    render(element, gallery_width, layout);
 }
 
 for( let gallery of document.querySelectorAll(".gallery") ){

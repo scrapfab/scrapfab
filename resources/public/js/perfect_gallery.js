@@ -20,16 +20,12 @@ function findIdealRowCount(_ref, images) {
   }, 0) / idealWidth);
 }
 
-Element.prototype.removeAll = function () {
-  while (this.firstChild) {
-    this.removeChild(this.firstChild);
-  }
-  return this;
-};
-
 var sumWidth = function sumWidth(row) {
   return _.reduce(row, function (total, _ref5) {
-    var width = _ref5.width;
+    var _ref6 = _slicedToArray(_ref5, 2);
+
+    var url = _ref6[0];
+    var width = _ref6[1].width;
     return total + width;
   }, 0);
 };
@@ -56,10 +52,12 @@ var render = function render(galleryElement, rowWidth, layout) {
 
       try {
         for (var _iterator2 = row[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var _step2$value = _step2.value;
-          var url = _step2$value.url;
-          var width = _step2$value.width;
-          var height = _step2$value.height;
+          var _step2$value = _slicedToArray(_step2.value, 2);
+
+          var url = _step2$value[0];
+          var _step2$value$ = _step2$value[1];
+          var width = _step2$value$.width;
+          var height = _step2$value$.height;
 
           var element = document.createElement("div");
           var img = document.createElement("img");
@@ -106,65 +104,62 @@ var render = function render(galleryElement, rowWidth, layout) {
     }
   }
 
-  galleryElement.removeAll();
   galleryElement.appendChild(container);
 };
 
-function weight(aspect) {
+function weight(_ref7) {
+  var _ref8 = _slicedToArray(_ref7, 2);
+
+  var url = _ref8[0];
+  var aspect = _ref8[1].aspect;
   return parseInt(aspect * 100);
 }
 
-function selectMedia(media, w) {
-  var index = _.findIndex(media, function (_ref6) {
-    var _ref7 = _slicedToArray(_ref6, 2);
+function weight_cache(media) {
+  var cache = _.groupBy(media, weight);
 
-    var url = _ref7[0];
-    var aspect = _ref7[1].aspect;
+  return function (w) {
+    var item = cache[w][0];
+    cache[w] = _.drop(cache[w]);
+    return item;
+  };
+}
 
-    console.log(aspect, w);
-    return weight(aspect) == w;
+function perfect_layout(gallery_width, gallery_height, media) {
+  var row_width = gallery_width;
+  var row_height = gallery_height / 2;
+
+  var rows = findIdealRowCount([row_width, row_height], media);
+  var partition = linear_partition(_.map(media, weight), rows);
+
+  var cache = weight_cache(media);
+
+  return partition.map(function (part) {
+    return part.map(function (w) {
+      var item = cache(w);
+
+      var _item = _slicedToArray(item, 2);
+
+      var url = _item[0];
+      var m = _item[1];
+
+      var scale = row_height / m.height;
+
+      return [url, _.merge(m, {
+        width: m.width * scale,
+        height: m.height * scale
+      })];
+    });
   });
-
-  return _.pullAt(media, [index])[0];
 }
 
 function perfect_gallery(element) {
   var media = _.toPairs(JSON.parse(element.getAttribute("data-photos")));
-  var rowWidth = element.offsetWidth;
-  var rowHeight = window.innerHeight / 2;
+  var gallery_width = element.offsetWidth;
+  var gallery_height = window.innerHeight;
+  var layout = perfect_layout(gallery_width, gallery_height, media);
 
-  var rows = findIdealRowCount([rowWidth, rowHeight], media);
-
-  var partition = linear_partition(_.map(media, function (_ref8) {
-    var _ref9 = _slicedToArray(_ref8, 2);
-
-    var url = _ref9[0];
-    var aspect = _ref9[1].aspect;
-    return weight(aspect);
-  }), rows);
-
-  var layout = partition.map(function (part) {
-    return part.map(function (wt) {
-      var _selectMedia = selectMedia(media, wt);
-
-      var _selectMedia2 = _slicedToArray(_selectMedia, 2);
-
-      var url = _selectMedia2[0];
-      var _selectMedia2$ = _selectMedia2[1];
-      var width = _selectMedia2$.width;
-      var height = _selectMedia2$.height;
-      var title = _selectMedia2$.title;
-
-      var scale = rowHeight / height;
-      return {
-        width: width * scale,
-        height: height * scale,
-        url: url,
-        title: title };
-    });
-  });
-
-  render(element, rowWidth, layout);
+  render(element, gallery_width, layout);
 }
 
 var _iteratorNormalCompletion3 = true;
