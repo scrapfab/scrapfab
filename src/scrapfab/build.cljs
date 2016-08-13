@@ -1,12 +1,13 @@
 (ns scrapfab.build
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require [cljs.nodejs :as nodejs]
-            [cljs.core.async :as async]
+            [cljs.core.async :as async :refer [<!]]
             [cljs.pprint :refer [pprint]]
             [reagent.core :as reagent]
             [clojure.string :refer [join split]]
             [cljs.reader :refer [read-string]]
             [scrapfab.site :as core]
+            [scrapfab.util :refer [ls read-in]]
             [scrapfab.media :as media]))
 
 (nodejs/enable-util-print!)
@@ -67,11 +68,27 @@
              (.dirname file-path path)
              #(.writeFileSync fs path html))))
 
+(defn process-galleries!
+  []
+  (let [result (async/chan)]
+    (go
+      (let [galleries (<! (ls "site/galleries"))]
+        (async/pipe (async/merge
+                      (map read-in galleries))
+                    result)))
+    result))
+
+(defn write-assets!
+  []
+  (ncp "site/resources" "build"))
+
 (defn -main [& args]
   (let [{:keys [site-map layout]} core/scrapfab]
     (go
       (let [media-library (async/<! (media/load-library))]
-        (ncp "site" "build")
+        (write-assets!)
+        (pprint
+          (async/<! (async/reduce conj [] (process-galleries!))) )
         (doseq [[url page] site-map]
           (let [html  (render-page layout url page media-library)]
             (write-page! url html)))))))

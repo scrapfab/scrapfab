@@ -8,7 +8,7 @@
 (defonce gm (nodejs/require "gm"))
 (defonce path (nodejs/require "path"))
 
-(defonce media-dir "site/img")
+(defonce media-dir "site/resources/img")
 
 (def media-meta
   (let [source (.readFileSync fs "site/media.edn")]
