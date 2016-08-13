@@ -9,6 +9,8 @@
   [tags media]
   (seq (intersection (set tags) (:tags (second media)))))
 
+(def highest-rated (comp :rate second))
+
 (defn gallery
   ([media-library]
     (gallery media-library []))
@@ -16,6 +18,6 @@
   [:div.gallery
    {:data-photos (->> media-library
                       (filter #(tagged-media? tags %))
-                      (sort-by (comp :rate second) >)
+                      (sort-by highest-rated >)
                       (into {})
                       (media/to-json))}]))

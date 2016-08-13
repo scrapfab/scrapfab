@@ -68,8 +68,8 @@ var render = function render(galleryElement, rowWidth, layout) {
           img.className = "gallery-image";
 
           element.className = "gallery-cell";
-          element.style.width = width * scaleFactor + "px";
-          element.style.height = height * scaleFactor + "px";
+          element.style.width = parseInt(width * scaleFactor) + "px";
+          element.style.height = parseInt(height * scaleFactor) + "px";
           element.appendChild(img);
 
           rowElement.appendChild(element);
