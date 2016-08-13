@@ -8,10 +8,10 @@
 (defonce gm (nodejs/require "gm"))
 (defonce path (nodejs/require "path"))
 
-(defonce media-dir "resources/public/img")
+(defonce media-dir "site/img")
 
 (def media-meta
-  (let [source (.readFileSync fs "meta/media.edn")]
+  (let [source (.readFileSync fs "site/media.edn")]
     (read-string (.toString source))))
 
 (defrecord MediaInfo [width height aspect tags desc rate title])
@@ -19,14 +19,12 @@
 (defn process-info
   [name {:keys [width height]}]
   (map->MediaInfo
-    {:width width
-     :height height
-     :aspect (/ width height)
-     :tags (get-in media-meta [name :tags])
-     :desc (get-in media-meta [name :desc])
-     :rate (get-in media-meta [name :rate])
-     :title (get-in media-meta [name :title])}))
-;;
+    (merge {:width width
+            :height height
+            :aspect (/ width height)}
+           (select-keys (get media-meta name)
+                        [:tags :desc :rate :title]))))
+
 (defn- load-info
   "Given a path to a media collection item, return a channel which contains
   a pair [path media-info]."

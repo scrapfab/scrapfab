@@ -70,7 +70,7 @@
     [gallery media-library tags]]])
 
 (def site-map
-  {"/all"        {:title  "Scrapfab"
+  {"/index"      {:title  "Scrapfab"
                   :render (partial service-page [:metal :sculpt :prop :set])}
 
    "/metal"     {:title  "Metal Fabrication"

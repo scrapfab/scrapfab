@@ -67,32 +67,12 @@
              (.dirname file-path path)
              #(.writeFileSync fs path html))))
 
-(defn normalize-indexes
-  "Given a site-map, return a sequence of [url page] entries with all index
-  page urls explicitely referencing an index.html file."
-  [site-map]
-  (map (fn [[url page]]
-         (if (:index? page)
-           [(join "/"
-                  (concat (split url "/")
-                          ["/index"]))
-            (dissoc page :index?)]
-           [url page]))
-       site-map))
-
-(defn load-media-library
-  []
-  (let [source (.readFileSync fs "meta/media.edn")]
-    (go
-      (pprint (async/<! (media/load-library))))
-    (read-string (.toString source))))
-
 (defn -main [& args]
   (let [{:keys [site-map layout]} core/scrapfab]
     (go
       (let [media-library (async/<! (media/load-library))]
-        (ncp "resources/public" "build")
-        (doseq [[url page] (normalize-indexes site-map)]
+        (ncp "site" "build")
+        (doseq [[url page] site-map]
           (let [html  (render-page layout url page media-library)]
             (write-page! url html)))))))
 
