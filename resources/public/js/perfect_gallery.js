@@ -2,32 +2,19 @@
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-function imageInfo(img) {
-  var w = img.width;
-  var h = img.height;
+function findIdealRowCount(_ref, images) {
+  var _ref2 = _slicedToArray(_ref, 2);
 
-  return {
-    element: img,
-    width: w,
-    height: h,
-    aspect: w / h
-  };
-}
+  var idealWidth = _ref2[0];
+  var idealHeight = _ref2[1];
 
-function imageWeight(_ref) {
-  var aspect = _ref.aspect;
-  return parseInt(aspect * 100);
-}
+  return Math.round(_.reduce(images, function (summedWidth, _ref3) {
+    var _ref4 = _slicedToArray(_ref3, 2);
 
-function findIdealRowCount(_ref2, images) {
-  var _ref3 = _slicedToArray(_ref2, 2);
-
-  var idealWidth = _ref3[0];
-  var idealHeight = _ref3[1];
-
-  return Math.round(_.reduce(images, function (summedWidth, _ref4) {
-    var width = _ref4.width;
-    var height = _ref4.height;
+    var url = _ref4[0];
+    var _ref4$ = _ref4[1];
+    var width = _ref4$.width;
+    var height = _ref4$.height;
 
     return summedWidth + width * idealHeight / height;
   }, 0) / idealWidth);
@@ -61,6 +48,8 @@ var render = function render(galleryElement, rowWidth, layout) {
       var rowElement = document.createElement("div");
       var scaleFactor = rowWidth / sumWidth(row);
 
+      rowElement.className = "gallery-row";
+
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
       var _iteratorError2 = undefined;
@@ -68,12 +57,21 @@ var render = function render(galleryElement, rowWidth, layout) {
       try {
         for (var _iterator2 = row[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
           var _step2$value = _step2.value;
-          var element = _step2$value.element;
+          var url = _step2$value.url;
           var width = _step2$value.width;
           var height = _step2$value.height;
 
-          element.width = width * scaleFactor;
-          element.height = height * scaleFactor;
+          var element = document.createElement("div");
+          var img = document.createElement("img");
+
+          img.src = "img/" + url;
+          img.className = "gallery-image";
+
+          element.className = "gallery-cell";
+          element.style.width = width * scaleFactor + "px";
+          element.style.height = height * scaleFactor + "px";
+          element.appendChild(img);
+
           rowElement.appendChild(element);
         }
       } catch (err) {
@@ -112,51 +110,61 @@ var render = function render(galleryElement, rowWidth, layout) {
   galleryElement.appendChild(container);
 };
 
-function selectImage(images, weight) {
-  var index = _.findIndex(images, function (img) {
-    return imageWeight(img) == weight;
-  });
-  return _.pullAt(images, [index])[0];
+function weight(aspect) {
+  return parseInt(aspect * 100);
 }
 
-function preload(url) {
-  var img = document.createElement("img");
+function selectMedia(media, w) {
+  var index = _.findIndex(media, function (_ref6) {
+    var _ref7 = _slicedToArray(_ref6, 2);
 
-  var promise = new Promise(function (resolve, reject) {
-    img.addEventListener("load", function () {
-      resolve(img);
-    });
+    var url = _ref7[0];
+    var aspect = _ref7[1].aspect;
+
+    console.log(aspect, w);
+    return weight(aspect) == w;
   });
 
-  img.src = url;
-
-  return promise;
+  return _.pullAt(media, [index])[0];
 }
 
 function perfect_gallery(element) {
-  var photoURLs = element.getAttribute("data-photos").split(" ");
+  var media = _.toPairs(JSON.parse(element.getAttribute("data-photos")));
+  var rowWidth = element.offsetWidth;
+  var rowHeight = window.innerHeight / 2;
 
-  Promise.all(_.map(photoURLs, preload)).then(function (imgs) {
-    var images = _.map(imgs, imageInfo);
-    var weights = _.map(images, imageWeight);
+  var rows = findIdealRowCount([rowWidth, rowHeight], media);
 
-    var rowWidth = element.offsetWidth;
-    var rowHeight = window.innerHeight / 2;
+  var partition = linear_partition(_.map(media, function (_ref8) {
+    var _ref9 = _slicedToArray(_ref8, 2);
 
-    var rows = findIdealRowCount([rowWidth, rowHeight], images);
+    var url = _ref9[0];
+    var aspect = _ref9[1].aspect;
+    return weight(aspect);
+  }), rows);
 
-    var layout = linear_partition(weights, rows).map(function (part) {
-      return part.map(function (weight) {
-        var image = selectImage(images, weight);
-        var scaleFactor = rowHeight / image.height;
-        image.width = Math.floor(image.width * scaleFactor);
-        image.height = Math.floor(image.height * scaleFactor);
-        return image;
-      });
+  var layout = partition.map(function (part) {
+    return part.map(function (wt) {
+      var _selectMedia = selectMedia(media, wt);
+
+      var _selectMedia2 = _slicedToArray(_selectMedia, 2);
+
+      var url = _selectMedia2[0];
+      var _selectMedia2$ = _selectMedia2[1];
+      var width = _selectMedia2$.width;
+      var height = _selectMedia2$.height;
+      var title = _selectMedia2$.title;
+
+      var scale = rowHeight / height;
+      return {
+        width: width * scale,
+        height: height * scale,
+        url: url,
+        title: title };
     });
-
-    render(element, rowWidth, layout);
   });
+
+  render(element, rowWidth, layout);
 }
 
 var _iteratorNormalCompletion3 = true;

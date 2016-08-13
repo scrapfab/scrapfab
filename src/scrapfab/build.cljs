@@ -84,15 +84,16 @@
   []
   (let [source (.readFileSync fs "meta/media.edn")]
     (go
-      (pprint (async/<! (media/load-library!))))
+      (pprint (async/<! (media/load-library))))
     (read-string (.toString source))))
 
 (defn -main [& args]
-  (let [{:keys [site-map layout]} core/scrapfab
-        media-library (load-media-library)]
-    (ncp "resources/public" "build")
-    (doseq [[url page] (normalize-indexes site-map)]
-      (let [html  (render-page layout url page media-library)]
-        (write-page! url html)))))
+  (let [{:keys [site-map layout]} core/scrapfab]
+    (go
+      (let [media-library (async/<! (media/load-library))]
+        (ncp "resources/public" "build")
+        (doseq [[url page] (normalize-indexes site-map)]
+          (let [html  (render-page layout url page media-library)]
+            (write-page! url html)))))))
 
 (set! *main-cli-fn* -main)

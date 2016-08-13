@@ -1,64 +1,68 @@
-{"/img/fire_pit.jpg" {:title "Satanic Fire Pit"
+{"death_truck.jpg" {:title "Death Truck 2016"
+                    :desc ""
+                    :rate "5"
+                    :tags #{:sculpt :metal :prop}}
+
+ "fire_pit.jpg" {:title "Satanic Fire Pit"
                       :desc  ""
-                      :rate  "5"
+                      :rate  "6"
                       :tags  #{:sculpt :metal}}
 
- "/img/curvy_railing.jpg" {:title "Metal Railing for staircase"
+ "curvy_railing.jpg" {:title "Metal Railing for staircase"
                            :desc  ""
                            :tags  #{:metal}}
 
- "/img/corp_head.jpg" {:title "Corporate Headquarters"
+ "corp_head.jpg" {:title "Corporate Headquarters"
                        :desc  ""
                        :tags  #{:set}}
 
- "/img/edc_flower.jpg"    {:title "Electric Daisy Carnival Flower"
+ "edc_flower.jpg"    {:title "Electric Daisy Carnival Flower"
                            :desc  ""
                            :rate  4
                            :tags  #{:set}}
 
- "/img/edc_show.jpg" {:title "Electric Daisy Carnival Flower and Monster"
+ "edc_show.jpg" {:title "Electric Daisy Carnival Flower and Monster"
                       :desc  ""
                       :tags  #{:set}}
 
- "/img/cop_car.jpg" {:title "Police Car"
-                     :desc  ""
-                     :tags  #{:prop}}
-
- "/img/van_shelving.jpg" {:title "Shelving for soda repair vans."
+ "van_shelving.jpg" {:title "Shelving for soda repair vans."
                           :desc  ""
                           :tags  #{:metal}}
 
- "/img/fire_stick.jpg"  {:title "Fire Stick"
+ "fire_stick.jpg"  {:title "Fire Stick"
                          :desc ""
                          :rate 4
                          :tags #{:metal :prop}}
 
- "/img/spaceship.jpg" {:title "Water Heater Spaceship"
+ "spaceship.jpg" {:title "Water Heater Spaceship"
                        :desc  ""
                        :rate  5
                        :tags  #{:metal :sculpt}}
 
- "/img/see_saw.jpg" {:title "See Saw"
+ "see_saw.jpg" {:title "See Saw"
                      :desc   ""
                      :rate   5
                      :tags   #{:metal :prop :sculpt}}
 
- "/img/nfl_hallway_1.jpg" {:title "NFL Hallway"
+ "nfl_hallway_1.jpg" {:title "NFL Hallway"
                           :desc  ""
                           :tags  #{:set}}
 
- "/img/kicks_1.jpg" {:title "Kicks USA Store Display"
+ "kicks_1.jpg" {:title "Kicks USA Store Display"
                  :desc  ""
+                 :rate  0
                  :tags  #{:set}}
 
- "/img/kicks_2.jpg" {:title "Kicks USA Store Display"
+ "kicks_2.jpg" {:title "Kicks USA Store Display"
                  :desc  ""
+                 :rate  0
                  :tags  #{:set}}
 
- "/img/kicks_3.jpg" {:title "Kicks USA Store Display"
+ "kicks_3.jpg" {:title "Kicks USA Store Display"
                  :desc  ""
+                 :rate  0
                  :tags  #{:set}}
 
- "/img/trailer.jpg" {:title "Bike Trailer"
+ "trailer.jpg" {:title "Bike Trailer"
                      :desc  ""
                      :tags  #{:metal}}}

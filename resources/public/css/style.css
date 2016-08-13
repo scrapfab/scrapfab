@@ -29,13 +29,20 @@ body,
     margin: 0 0 1rem 0;
 }
 
-.gallery-cell {
-    box-sizing: border-box;
-    padding: 0.25em;
+.gallery-image {
+    margin: 0;
+    border: 0;
+    width: 100%;
+    height: 100%;
 }
 
-.gallery img {
-    vertical-align: bottom;
+.gallery-row {
+    display: table-row;
+}
+
+.gallery-cell {
+    border: 0;
+    display: inline-block;
 }
 
 .profile-picture {

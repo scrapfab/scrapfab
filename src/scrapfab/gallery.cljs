@@ -1,12 +1,13 @@
 (ns scrapfab.gallery
-  (:require [clojure.set :refer [subset?]]
-            [clojure.string :refer [join]]))
+  (:require [clojure.set :refer [intersection]]
+            [clojure.string :refer [join]]
+            [scrapfab.media :as media]))
 
 (defn tagged-media?
   "Returns true if all tags in given as the first argument are associated
   with the media given as the second argument."
   [tags media]
-  (subset? (set tags) (:tags (second media))))
+  (seq (intersection (set tags) (:tags (second media)))))
 
 (defn gallery
   ([media-library]
@@ -16,5 +17,5 @@
    {:data-photos (->> media-library
                       (filter #(tagged-media? tags %))
                       (sort-by (comp :rate second) >)
-                      (map first)
-                      (join " "))}]))
+                      (into {})
+                      (media/to-json))}]))

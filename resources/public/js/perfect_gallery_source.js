@@ -1,19 +1,5 @@
-function imageInfo(img){
-  let w = img.width;
-  let h = img.height;
-
-  return {
-    element: img,
-    width:   w,
-    height:  h,
-    aspect:  w / h
-  };
-}
-
-function imageWeight({aspect}){ return parseInt(aspect * 100); }
-
 function findIdealRowCount([idealWidth, idealHeight], images){
-  return Math.round(_.reduce(images, (summedWidth, {width, height}) => {
+  return Math.round(_.reduce(images, (summedWidth, [url, {width, height}]) => {
     return summedWidth + width * idealHeight / height;
   }, 0) / idealWidth);
 }
@@ -32,9 +18,20 @@ let render = (galleryElement, rowWidth, layout) => {
     var rowElement = document.createElement("div");
     var scaleFactor = rowWidth / sumWidth(row);
 
-    for(let {element, width, height} of row){
-      element.width = width * scaleFactor;
-      element.height = height * scaleFactor;
+    rowElement.className = "gallery-row";
+
+    for(let {url, width, height} of row){
+      var element = document.createElement("div");
+      let img = document.createElement("img");
+
+      img.src = "img/" + url;
+      img.className = "gallery-image";
+
+      element.className = "gallery-cell";
+      element.style.width = (width * scaleFactor) + "px";
+      element.style.height = (height * scaleFactor) + "px";
+      element.appendChild(img);
+
       rowElement.appendChild(element);
     }
 
@@ -45,49 +42,39 @@ let render = (galleryElement, rowWidth, layout) => {
   galleryElement.appendChild(container);
 }
 
-function selectImage(images, weight){
-  let index = _.findIndex(images, img => imageWeight(img) == weight );
-  return _.pullAt(images, [index])[0];
-}
+function weight(aspect){ return parseInt(aspect * 100); }
 
-function preload(url){
-  var img = document.createElement("img");
+function selectMedia(media, w){
+  let index = _.findIndex(media, (([url, {aspect}]) => {
+    console.log(aspect, w);
+    return weight(aspect) == w
+  }));
 
-  var promise = new Promise(function(resolve, reject){
-    img.addEventListener("load", function(){
-      resolve(img);
-    })
-  });
-
-  img.src = url;
-
-  return promise;
+  return _.pullAt(media, [index])[0];
 }
 
 function perfect_gallery(element){
-    var photoURLs = element.getAttribute("data-photos").split(" ");
+    var media = _.toPairs(JSON.parse(element.getAttribute("data-photos")));
+    var rowWidth = element.offsetWidth;
+    var rowHeight = window.innerHeight / 2;
 
-    Promise.all(_.map(photoURLs, preload)).then(function(imgs){
-      var images = _.map(imgs, imageInfo);
-      var weights = _.map(images, imageWeight);
+    var rows = findIdealRowCount([rowWidth, rowHeight], media);
 
-      var rowWidth = element.offsetWidth;
-      var rowHeight = window.innerHeight / 2;
+    var partition = linear_partition(_.map(media, ([url, {aspect}]) => weight(aspect)), rows)
 
-      var rows = findIdealRowCount([rowWidth, rowHeight], images);
-
-      var layout = linear_partition(weights, rows).map((part) => {
-        return part.map((weight) => {
-          var image = selectImage(images, weight);
-          var scaleFactor = rowHeight / image.height;
-          image.width = Math.floor(image.width * scaleFactor);
-          image.height = Math.floor(image.height * scaleFactor);
-          return image;
-        });
+    var layout = partition.map((part) => {
+      return part.map((wt) => {
+        var [url, {width, height, title}] = selectMedia(media, wt);
+        var scale = rowHeight / height;
+        return {
+          width: width * scale,
+          height: height * scale,
+          url: url,
+          title: title}
       });
-
-      render(element, rowWidth, layout);
     });
+
+    render(element, rowWidth, layout);
 }
 
 for( let gallery of document.querySelectorAll(".gallery") ){

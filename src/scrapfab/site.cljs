@@ -37,15 +37,17 @@
     [:p.text-center
      "Custom fabricators making fantasies come alive."]
     [:h1.site-heading "Our Work"]
+    [:a {:href "#gallery"}]
     body
     [who-we-are]]
    [:div.pure-u-1-24]])
 
 (def service-navigation
-  [{:url "/metal" :label "Metal Fabrication"}
-   {:url "/prop" :label "Prop Fabrication"}
-   {:url "/set" :label "Set Design"}
-   {:url "/sculpture" :label "Sculpture"}])
+  [{:url "/all#gallery" :label "All"}
+   {:url "/metal#gallery" :label "Metal Fabrication"}
+   {:url "/prop#gallery" :label "Prop Fabrication"}
+   {:url "/set#gallery" :label "Set Design"}
+   {:url "/sculpture#gallery" :label "Sculpture"}])
 
 (defn service-layout
   [url body]
@@ -68,9 +70,8 @@
     [gallery media-library tags]]])
 
 (def site-map
-  {"/"           {:title  "Scrapfab"
-                  :render service-index
-                  :index? true}
+  {"/all"        {:title  "Scrapfab"
+                  :render (partial service-page [:metal :sculpt :prop :set])}
 
    "/metal"     {:title  "Metal Fabrication"
                  :render (partial service-page [:metal])}
