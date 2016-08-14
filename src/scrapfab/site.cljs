@@ -66,7 +66,7 @@
 (defn service-page
   [url {:keys [title gallery-id]} media-library]
   [service-layout url
-   [:div.gallery {:id "all"}]])
+   [:div.gallery {:data-gallery-id "all"}]])
 
 (def site-map
   {"/index"

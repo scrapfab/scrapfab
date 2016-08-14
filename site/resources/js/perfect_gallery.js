@@ -165,7 +165,7 @@ function request_gallery(id) {
 }
 
 function perfect_gallery(element) {
-  request_gallery(element.id).then(function (media) {
+  request_gallery(element.getAttribute("data-gallery-id")).then(function (media) {
     var gallery_width = element.offsetWidth;
     var gallery_height = window.innerHeight;
     var layout = perfect_layout(gallery_width, gallery_height, media);

@@ -81,7 +81,7 @@ function request_gallery(id){
 }
 
 function perfect_gallery(element){
-  request_gallery(element.id).then((media) => {
+  request_gallery(element.getAttribute("data-gallery-id")).then((media) => {
     var gallery_width = element.offsetWidth;
     var gallery_height = window.innerHeight;
     var layout = perfect_layout(gallery_width, gallery_height, media);
