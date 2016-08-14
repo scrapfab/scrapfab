@@ -16,7 +16,7 @@
                path
                (fn [err edn-buffer]
                  (async/put! result
-                             [(.basename node-path path)
+                             [(.basename node-path path ".edn")
                               (read-string (.toString edn-buffer))])
                  (async/close! result)))
     result))

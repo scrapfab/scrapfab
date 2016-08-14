@@ -153,13 +153,25 @@ function perfect_layout(gallery_width, gallery_height, media) {
   });
 }
 
-function perfect_gallery(element) {
-  var media = _.toPairs(JSON.parse(element.getAttribute("data-photos")));
-  var gallery_width = element.offsetWidth;
-  var gallery_height = window.innerHeight;
-  var layout = perfect_layout(gallery_width, gallery_height, media);
+function request_gallery(id) {
+  return new Promise(function (resolve, reject) {
+    var req = new XMLHttpRequest();
+    req.addEventListener("load", function () {
+      resolve(JSON.parse(this.responseText));
+    });
+    req.open("GET", "media/" + id + ".json");
+    req.send();
+  });
+}
 
-  render(element, gallery_width, layout);
+function perfect_gallery(element) {
+  request_gallery(element.id).then(function (media) {
+    var gallery_width = element.offsetWidth;
+    var gallery_height = window.innerHeight;
+    var layout = perfect_layout(gallery_width, gallery_height, media);
+
+    render(element, gallery_width, layout);
+  });
 }
 
 var _iteratorNormalCompletion3 = true;

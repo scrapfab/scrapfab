@@ -18,6 +18,8 @@
 (defonce ncp (nodejs/require "ncp"))
 (defonce gm (nodejs/require "gm"))
 
+(.mkdirp mkdirp "build/media")
+
 (defn url->path
   "Converts the url of a page to a filename, relative to the root
   directory of the site."
@@ -68,9 +70,20 @@
              (.dirname file-path path)
              #(.writeFileSync fs path html))))
 
+(defn compile-gallery!
+  [media-library [name {:keys [tags]}]]
+  (let [path (.join file-path "build" "media" (str name ".json"))
+        source (->> media-library
+                    (filter (partial media/tagged? tags))
+                    (sort-by media/rating >)
+                    ;;(into {})
+                    (media/to-json))]
+    (.writeFileSync fs path source)
+    true))
+
 (defn process-galleries!
-  []
-  (let [result (async/chan)]
+  [media-library]
+  (let [result (async/chan 16 (map (partial compile-gallery! media-library)))]
     (go
       (let [galleries (<! (ls "site/galleries"))]
         (async/pipe (async/merge
@@ -85,10 +98,9 @@
 (defn -main [& args]
   (let [{:keys [site-map layout]} core/scrapfab]
     (go
-      (let [media-library (async/<! (media/load-library))]
+      (let [media-library (async/<! (media/load-library))
+            gallery-done  (process-galleries! media-library)]
         (write-assets!)
-        (pprint
-          (async/<! (async/reduce conj [] (process-galleries!))) )
         (doseq [[url page] site-map]
           (let [html  (render-page layout url page media-library)]
             (write-page! url html)))))))

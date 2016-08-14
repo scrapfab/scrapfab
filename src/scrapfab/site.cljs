@@ -64,26 +64,14 @@
     [gallery media-library]]])
 
 (defn service-page
-  [tags url {:keys [title]} media-library]
+  [url {:keys [title gallery-id]} media-library]
   [service-layout url
-   [:div
-    [gallery media-library tags]]])
+   [:div.gallery {:id "all"}]])
 
 (def site-map
-  {"/index"      {:title  "Scrapfab"
-                  :render (partial service-page [:metal :sculpt :prop :set])}
-
-   "/metal"     {:title  "Metal Fabrication"
-                 :render (partial service-page [:metal])}
-
-   "/prop"      {:title  "Prop Fabrication"
-                 :render (partial service-page [:prop])}
-
-   "/set"       {:title  "Set Fabrication"
-                 :render (partial service-page [:set])}
-
-   "/sculpture" {:title  "Sculpture"
-                 :render (partial service-page [:sculpt])}})
+  {"/index"
+   {:title      "Scrapfab"
+    :render     service-page}})
 
 (def scrapfab
   {:layout scrapfab-layout

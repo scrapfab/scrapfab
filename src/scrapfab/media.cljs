@@ -1,6 +1,7 @@
 (ns scrapfab.media
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
-  (:require [cljs.nodejs :as nodejs]
+  (:require [clojure.set :refer [intersection]]
+            [cljs.nodejs :as nodejs]
             [cljs.reader :refer [read-string]]
             [cljs.core.async :as async]))
 
@@ -63,6 +64,14 @@
               (fn [_ paths]
                 (async/pipe (create-library paths) result)))
     result))
+
+(defn tagged?
+  "Returns true if all tags in given as the first argument are associated
+  with the media given as the second argument."
+  [tags media]
+  (seq (intersection (set tags) (:tags (second media)))))
+
+(defn rating [[_ {:keys [rate]}]] rate)
 
 (defn to-json
   [media-info]
