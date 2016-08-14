@@ -45,6 +45,7 @@
                             " pure-menu-selected")))
          [:a.pure-menu-link
           {:href     (url-fn item)
+           :class    (str class "-link")
            :on-click (fn [e]
                        (.preventDefault e)
                        (on-change item))}

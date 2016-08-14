@@ -43,18 +43,18 @@
    [:div.pure-u-1-24]])
 
 (def service-navigation
-  [{:url "/all#gallery" :label "All"}
-   {:url "/metal#gallery" :label "Metal Fabrication"}
-   {:url "/prop#gallery" :label "Prop Fabrication"}
-   {:url "/set#gallery" :label "Set Design"}
-   {:url "/sculpture#gallery" :label "Sculpture"}])
+  [{:url "#all" :label "All"}
+   {:url "#metal" :label "Metal Fabrication"}
+   {:url "#prop" :label "Prop Fabrication"}
+   {:url "#set" :label "Set Design"}
+   {:url "#sculpt" :label "Sculpture"}])
 
 (defn service-layout
   [url body]
   [:div
    [navigation :items service-navigation
                :current-url url
-               :class "service-menu"]
+               :class "gallery-menu"]
    body])
 
 (defn service-index

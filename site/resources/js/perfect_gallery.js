@@ -42,7 +42,13 @@ var render = function render(galleryElement, rowWidth, layout) {
       var row = _step.value;
 
       var rowElement = document.createElement("div");
-      var scaleFactor = rowWidth / sumWidth(row);
+      var summedRatios = _.reduce(row, function (s, _ref7) {
+        var _ref8 = _slicedToArray(_ref7, 2);
+
+        var url = _ref8[0];
+        var aspect = _ref8[1].aspect;
+        return s + aspect;
+      }, 0);
 
       rowElement.className = "gallery-row";
 
@@ -58,6 +64,7 @@ var render = function render(galleryElement, rowWidth, layout) {
           var _step2$value$ = _step2$value[1];
           var width = _step2$value$.width;
           var height = _step2$value$.height;
+          var aspect = _step2$value$.aspect;
 
           var element = document.createElement("div");
           var img = document.createElement("img");
@@ -66,8 +73,8 @@ var render = function render(galleryElement, rowWidth, layout) {
           img.className = "gallery-image";
 
           element.className = "gallery-cell";
-          element.style.width = parseInt(width * scaleFactor) + "px";
-          element.style.height = parseInt(height * scaleFactor) + "px";
+          element.style.width = parseInt(rowWidth / summedRatios * aspect) + "px";
+          element.style.height = parseInt(rowWidth / summedRatios) + "px";
           element.appendChild(img);
 
           rowElement.appendChild(element);
@@ -107,11 +114,11 @@ var render = function render(galleryElement, rowWidth, layout) {
   galleryElement.appendChild(container);
 };
 
-function weight(_ref7) {
-  var _ref8 = _slicedToArray(_ref7, 2);
+function weight(_ref9) {
+  var _ref10 = _slicedToArray(_ref9, 2);
 
-  var url = _ref8[0];
-  var aspect = _ref8[1].aspect;
+  var url = _ref10[0];
+  var aspect = _ref10[1].aspect;
   return parseInt(aspect * 100);
 }
 
@@ -164,9 +171,13 @@ function request_gallery(id) {
   });
 }
 
-function perfect_gallery(element) {
-  request_gallery(element.getAttribute("data-gallery-id")).then(function (media) {
-    var gallery_width = element.offsetWidth;
+function perfect_gallery(element, gallery_id) {
+  while (element.firstChild) {
+    element.removeChild(element.firstChild);
+  }
+
+  request_gallery(gallery_id).then(function (media) {
+    var gallery_width = element.getBoundingClientRect().width;
     var gallery_height = window.innerHeight;
     var layout = perfect_layout(gallery_width, gallery_height, media);
 
@@ -174,27 +185,27 @@ function perfect_gallery(element) {
   });
 }
 
-var _iteratorNormalCompletion3 = true;
-var _didIteratorError3 = false;
-var _iteratorError3 = undefined;
-
-try {
-  for (var _iterator3 = document.querySelectorAll(".gallery")[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-    var gallery = _step3.value;
-
-    perfect_gallery(gallery);
-  }
-} catch (err) {
-  _didIteratorError3 = true;
-  _iteratorError3 = err;
-} finally {
-  try {
-    if (!_iteratorNormalCompletion3 && _iterator3.return) {
-      _iterator3.return();
-    }
-  } finally {
-    if (_didIteratorError3) {
-      throw _iteratorError3;
-    }
+function set_hash(hash) {
+  if (history.pushState) {
+    history.pushState(null, null, hash);
+  } else {
+    window.location.hash = hash;
   }
 }
+
+document.addEventListener("click", function (e) {
+  if (/gallery-menu-link/.test(e.target.className)) {
+    e.preventDefault();
+    e.stopPropagation();
+    set_hash(e.target.getAttribute("href"));
+    init();
+  }
+});
+
+function init() {
+  var id = window.location.hash ? window.location.hash.substring(1) : "all";
+  var gal = document.querySelectorAll(".gallery")[0];
+  perfect_gallery(gal, id);
+}
+
+init();

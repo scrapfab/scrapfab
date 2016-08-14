@@ -11,11 +11,11 @@ let render = (galleryElement, rowWidth, layout) => {
 
   for(let row of layout){
     let rowElement = document.createElement("div");
-    let scaleFactor = rowWidth / sumWidth(row);
+    let summedRatios = _.reduce(row, ((s, [url, {aspect}]) => s + aspect), 0)
 
     rowElement.className = "gallery-row";
 
-    for(let [url, {width, height}] of row){
+    for(let [url, {width, height, aspect}] of row){
       let element = document.createElement("div");
       let img = document.createElement("img");
 
@@ -23,8 +23,8 @@ let render = (galleryElement, rowWidth, layout) => {
       img.className = "gallery-image";
 
       element.className = "gallery-cell";
-      element.style.width = parseInt(width * scaleFactor) + "px";
-      element.style.height = parseInt(height * scaleFactor) + "px";
+      element.style.width = parseInt(rowWidth / summedRatios * aspect) + "px";
+      element.style.height = parseInt(rowWidth / summedRatios) + "px";
       element.appendChild(img);
 
       rowElement.appendChild(element);
@@ -64,8 +64,8 @@ function perfect_layout(gallery_width, gallery_height, media){
       let scale = row_height / m.height;
 
       return [url, _.merge(m, {
-        width: m.width * scale,
-        height: m.height * scale
+        width: (m.width * scale),
+        height: (m.height * scale)
       })];
     })
   })
@@ -80,9 +80,13 @@ function request_gallery(id){
   })
 }
 
-function perfect_gallery(element){
-  request_gallery(element.getAttribute("data-gallery-id")).then((media) => {
-    var gallery_width = element.offsetWidth;
+function perfect_gallery(element, gallery_id){
+  while(element.firstChild){
+    element.removeChild(element.firstChild);
+  }
+
+  request_gallery(gallery_id).then((media) => {
+    var gallery_width = element.getBoundingClientRect().width;
     var gallery_height = window.innerHeight;
     var layout = perfect_layout(gallery_width, gallery_height, media);
 
@@ -90,6 +94,27 @@ function perfect_gallery(element){
   });
 }
 
-for( let gallery of document.querySelectorAll(".gallery") ){
-  perfect_gallery(gallery);
+function set_hash(hash){
+  if(history.pushState) {
+    history.pushState(null, null, hash);
+  } else {
+    window.location.hash = hash;
+  }
 }
+
+document.addEventListener("click", function(e){
+  if( /gallery-menu-link/.test(e.target.className) ){
+    e.preventDefault();
+    e.stopPropagation();
+    set_hash(e.target.getAttribute("href"))
+    init();
+  }
+});
+
+function init(){
+  let id = window.location.hash ? window.location.hash.substring(1) : "all";
+  let gal = document.querySelectorAll(".gallery")[0];
+  perfect_gallery(gal, id);
+}
+
+init()
