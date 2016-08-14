@@ -30,6 +30,24 @@ body,
 }
 
 .gallery-image {
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+.gallery-image[data-loading] {
+    opacity: 0;
+}
+
+.gallery {
+    opacity: 1;
+}
+
+.gallery[data-loading] {
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.gallery-image {
     margin: 0;
     border: 0;
     width: 100%;

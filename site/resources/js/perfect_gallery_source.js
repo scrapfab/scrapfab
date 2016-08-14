@@ -1,10 +1,23 @@
-function findIdealRowCount([idealWidth, idealHeight], images){
-  return Math.round(_.reduce(images, (summedWidth, [url, {width, height}]) => {
-    return summedWidth + width * idealHeight / height;
-  }, 0) / idealWidth);
+
+function createCell(rowWidth, summedRatios, aspect){
+  let element = document.createElement("div");
+
+  element.className = "gallery-cell";
+  element.style.width = parseInt(rowWidth / summedRatios * aspect) + "px";
+  element.style.height = parseInt(rowWidth / summedRatios) + "px";
+
+  return element;
 }
 
-let sumWidth = row => _.reduce(row, ((total, [url, {width}]) => total + width), 0)
+function createImage(url){
+  let img = document.createElement("img");
+
+  img.className = "gallery-image";
+  img.setAttribute("data-loading", true);
+  img.addEventListener("load", (() => img.removeAttribute("data-loading")))
+  img.src = "img/" + url;
+  return img;
+}
 
 let render = (galleryElement, rowWidth, layout) => {
   let container = document.createElement("div");
@@ -16,24 +29,23 @@ let render = (galleryElement, rowWidth, layout) => {
     rowElement.className = "gallery-row";
 
     for(let [url, {width, height, aspect}] of row){
-      let element = document.createElement("div");
-      let img = document.createElement("img");
+      let cell = createCell(rowWidth, summedRatios, aspect);
+      let img = createImage(url);
 
-      img.src = "img/" + url;
-      img.className = "gallery-image";
-
-      element.className = "gallery-cell";
-      element.style.width = parseInt(rowWidth / summedRatios * aspect) + "px";
-      element.style.height = parseInt(rowWidth / summedRatios) + "px";
-      element.appendChild(img);
-
-      rowElement.appendChild(element);
+      cell.appendChild(img);
+      rowElement.appendChild(cell);
     }
 
     container.appendChild(rowElement);
   }
 
   galleryElement.appendChild(container);
+}
+
+function findIdealRowCount([idealWidth, idealHeight], images){
+  return Math.round(_.reduce(images, (summedWidth, [url, {width, height}]) => {
+    return summedWidth + width * idealHeight / height;
+  }, 0) / idealWidth);
 }
 
 function weight([url, {aspect}]){ return parseInt(aspect * 100); }
@@ -81,17 +93,23 @@ function request_gallery(id){
 }
 
 function perfect_gallery(element, gallery_id){
-  while(element.firstChild){
-    element.removeChild(element.firstChild);
-  }
+  var clone = element.cloneNode(false);
 
-  request_gallery(gallery_id).then((media) => {
-    var gallery_width = element.getBoundingClientRect().width;
-    var gallery_height = window.innerHeight;
-    var layout = perfect_layout(gallery_width, gallery_height, media);
+  element.addEventListener("transitionend", function(e){
+    if(e.target.className == "gallery"){
+      request_gallery(gallery_id).then((media) => {
+              e.target.parentNode.replaceChild(clone, e.target);
 
-    render(element, gallery_width, layout);
+        var gallery_width = clone.getBoundingClientRect().width;
+        var gallery_height = window.innerHeight;
+        var layout = perfect_layout(gallery_width, gallery_height, media);
+
+        render(clone, gallery_width, layout);
+      });
+    }
   });
+
+  element.setAttribute("data-loading", true);
 }
 
 function set_hash(hash){
