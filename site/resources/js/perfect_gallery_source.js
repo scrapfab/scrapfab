@@ -1,46 +1,9 @@
 
-function createCell(rowWidth, summedRatios, aspect){
-  let element = document.createElement("div");
-
-  element.className = "gallery-cell";
-  element.style.width = parseInt(rowWidth / summedRatios * aspect) + "px";
-  element.style.height = parseInt(rowWidth / summedRatios) + "px";
-
-  return element;
-}
-
-function createImage(url){
-  let img = document.createElement("img");
-
-  img.className = "gallery-image";
-  img.setAttribute("data-loading", true);
-  img.addEventListener("load", (() => img.removeAttribute("data-loading")))
-  img.src = "img/" + url;
-  return img;
-}
-
-let render = (galleryElement, rowWidth, layout) => {
-  let container = document.createElement("div");
-
-  for(let row of layout){
-    let rowElement = document.createElement("div");
-    let summedRatios = _.reduce(row, ((s, [url, {aspect}]) => s + aspect), 0)
-
-    rowElement.className = "gallery-row";
-
-    for(let [url, {width, height, aspect}] of row){
-      let cell = createCell(rowWidth, summedRatios, aspect);
-      let img = createImage(url);
-
-      cell.appendChild(img);
-      rowElement.appendChild(cell);
-    }
-
-    container.appendChild(rowElement);
-  }
-
-  galleryElement.appendChild(container);
-}
+/*
+---------------------------------------
+---- Layout
+---------------------------------------
+*/
 
 function findIdealRowCount([idealWidth, idealHeight], images){
   return Math.round(_.reduce(images, (summedWidth, [url, {width, height}]) => {
@@ -83,6 +46,63 @@ function perfect_layout(gallery_width, gallery_height, media){
   })
 }
 
+/*
+---------------------------------------
+---- Rendering
+---------------------------------------
+*/
+
+function createCell(rowWidth, summedRatios, aspect){
+  let width = parseInt(rowWidth / summedRatios * aspect);
+  let height = parseInt(rowWidth / summedRatios);
+
+  return $(`<div class="gallery-cell"
+                 style="width: ${width}px; height ${height}px;">
+            </div>`)[0];
+}
+
+function createImage(url){
+  let img = document.createElement("img");
+
+  img.className = "gallery-image";
+  img.setAttribute("data-loading", true);
+
+  img.addEventListener("load", (() => img.removeAttribute("data-loading")))
+
+  img.src = "img/" + url;
+
+  return img;
+}
+
+let render = (galleryElement, rowWidth, layout) => {
+  let container = document.createElement("div");
+
+  for(let row of layout){
+    let rowElement = document.createElement("div");
+    let summedRatios = _.reduce(row, ((s, [url, {aspect}]) => s + aspect), 0)
+
+    rowElement.className = "gallery-row";
+
+    for(let [url, {width, height, aspect}] of row){
+      let cell = createCell(rowWidth, summedRatios, aspect);
+      let img = createImage(url);
+
+      cell.appendChild(img);
+      rowElement.appendChild(cell);
+    }
+
+    container.appendChild(rowElement);
+  }
+
+  galleryElement.appendChild(container);
+}
+
+/*
+---------------------------------------
+---- Network
+---------------------------------------
+*/
+
 function request_gallery(id){
   return new Promise((resolve, reject) => {
     let req = new XMLHttpRequest();
@@ -95,7 +115,7 @@ function request_gallery(id){
 function perfect_gallery(element, gallery_id){
   var clone = element.cloneNode(false);
 
-  element.addEventListener("transitionend", function(e){
+  $(element).on("transitionend", ((e) => {
     if(e.target.className == "gallery"){
       request_gallery(gallery_id).then((media) => {
               e.target.parentNode.replaceChild(clone, e.target);
@@ -107,7 +127,7 @@ function perfect_gallery(element, gallery_id){
         render(clone, gallery_width, layout);
       });
     }
-  });
+  }));
 
   element.setAttribute("data-loading", true);
 }
@@ -120,14 +140,12 @@ function set_hash(hash){
   }
 }
 
-document.addEventListener("click", function(e){
-  if( /gallery-menu-link/.test(e.target.className) ){
-    e.preventDefault();
-    e.stopPropagation();
-    set_hash(e.target.getAttribute("href"))
-    init();
-  }
-});
+$(document).on("click", ".gallery-menu-link", ((e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  set_hash(e.target.getAttribute("href"))
+  init();
+}));
 
 function init(){
   let id = window.location.hash ? window.location.hash.substring(1) : "all";

@@ -83,7 +83,8 @@
   "/css/style.css"])
 
 (def javascripts
- ["/js/lodash.js"
+ ["https://code.jquery.com/jquery-3.1.0.js"
+  "/js/lodash.js"
   "/js/polyfill.min.js"
   "/js/linear_partition.js"
   "/js/perfect_gallery.js"])
