@@ -19,14 +19,17 @@
 (defn who-we-are
   []
   [:div
-  [:h1.site-heading "Who we are"]
+  [:h1.site-heading "Who We Are"]
+  [:hr]
   [:div.pure-g
    [:div.pure-u-1-2.profile
      [:img.profile-picture {:src "/img/good_deal.jpg"}]
-     [:h2.profile-name "Good Deal Neil"]]
+     [:h2.profile-name "Good Deal Neil"]
+     [:p.profile-text "Professional problem solver."]]
    [:div.pure-u-1-2.profile
      [:img.profile-picture {:src "/img/dmitry.jpg"}]
-     [:h2.profile-name "Dmitry Kolobov"]]]])
+     [:h2.profile-name "Dmitry Kolobov"]
+     [:p.profile-text "Scrap scientist."]]]])
 
 (defn scrapfab-layout
   [current-url body]
@@ -37,6 +40,7 @@
     [:p.text-center
      "Custom fabricators making fantasies come alive."]
     [:h1.site-heading "Our Work"]
+    [:hr]
     [:a {:href "#gallery"}]
     body
     [who-we-are]]

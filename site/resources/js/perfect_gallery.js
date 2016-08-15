@@ -221,7 +221,7 @@ function perfect_gallery(element, gallery_id) {
   $(element).on("transitionend", function (e) {
     if (e.target.className == "gallery") {
       request_gallery(gallery_id).then(function (media) {
-        e.target.parentNode.replaceChild(clone, e.target);
+        $(e.target).replaceWith($(clone));
 
         var gallery_width = clone.getBoundingClientRect().width;
         var gallery_height = window.innerHeight;
