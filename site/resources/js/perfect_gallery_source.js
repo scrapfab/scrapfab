@@ -173,11 +173,15 @@ $(document).on("click", ".gallery-menu-link", ((e) => {
   e.preventDefault();
   e.stopPropagation();
   set_hash(e.target.getAttribute("href"))
+  $(".pure-menu-selected").removeClass("pure-menu-selected");
+  $(e.target).parent().addClass("pure-menu-selected");
   init();
 }));
 
 function init(){
   let id = window.location.hash ? window.location.hash.substring(1) : "all";
+  console.log($(`a[href="#${id}"]`));
+  $(`a.gallery-menu-link[href="#${id}"]`).parent().addClass("pure-menu-selected")
   let gal = document.querySelectorAll(".gallery")[0];
   perfect_gallery(gal, id);
 }
