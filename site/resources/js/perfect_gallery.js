@@ -141,7 +141,6 @@ var render = function render(galleryElement, rowWidth, layout, annotate) {
           var aspect = _step2$value$.aspect;
           var data = _step2$value$.data;
 
-          console.log(data);
           $row.append(createCell(rowWidth, summedRatios, aspect).append(createImage(url, annotate(data))));
         }
       } catch (err) {
@@ -196,11 +195,24 @@ function request_gallery(id) {
   });
 }
 
+function photoCredit(credit) {
+  if (credit) {
+    var author = credit.author;
+    var website = credit.website;
+
+
+    return "\n      <div class='photo-credit'>\n        Photo by\n        <span>" + author + "</span>\n        <a target=\"_blank\" href=\"http://" + website + "\">" + website + "</a>\n      </div>\n    ";
+  }
+
+  return "";
+}
+
 function annotatePhoto(_ref9) {
   var title = _ref9.title;
   var desc = _ref9.desc;
+  var credit = _ref9.credit;
 
-  return $("<div></div>").append("<strong>" + title + "</strong>").append("<span>" + desc + "</span>");
+  return $("\n    <div>\n      <h2 class=\"photo-title\">" + title + "</h2>\n      <span>" + desc + "</span>\n      " + photoCredit(credit) + "\n    </div>\n  ");
 }
 
 function perfect_gallery(element, gallery_id) {

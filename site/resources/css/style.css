@@ -70,6 +70,20 @@ body,
     box-sizing: border-box;
 }
 
+.photo-credit {
+    display: inline-block
+}
+
+.photo-credit a {
+    color: inherit;
+}
+
+.photo-title {
+    display: inline-block;
+    margin: 0;
+    padding: 0 0.5em 0 0;
+}
+
 .profile-picture {
   max-width: 74%;
   display: block;

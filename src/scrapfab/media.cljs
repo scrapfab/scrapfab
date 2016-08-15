@@ -24,7 +24,7 @@
      :height height
      :aspect (/ width height)
      :data (select-keys (get media-meta name)
-                        [:tags :desc :rate :title])}))
+                        [:tags :desc :rate :title :credit])}))
 
 (defn- load-info
   "Given a path to a media collection item, return a channel which contains

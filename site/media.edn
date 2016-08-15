@@ -6,6 +6,8 @@
  "fire_pit.jpg" {:title "Satanic Fire Pit"
                       :desc  ""
                       :rate  "6"
+                      :credit {:author "Kit Castagne"
+                               :website "www.kitcastagne.com"}
                       :tags  #{:sculpt :metal}}
 
  "curvy_railing.jpg" {:title "Metal Railing for staircase"

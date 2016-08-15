@@ -89,7 +89,6 @@ let render = (galleryElement, rowWidth, layout, annotate) => {
     let summedRatios = _.reduce(row, ((s, [url, {aspect}]) => s + aspect), 0)
 
     for(let [url, {width, height, aspect, data}] of row){
-      console.log(data);
       $row.append(
         createCell(rowWidth, summedRatios, aspect).append(createImage(url, annotate(data)))
       );
@@ -116,10 +115,30 @@ function request_gallery(id){
   })
 }
 
-function annotatePhoto({title, desc}){
-  return $("<div></div>")
-    .append(`<strong>${title}</strong>`)
-    .append(`<span>${desc}</span>`)
+function photoCredit(credit){
+  if(credit){
+    let {author, website} = credit;
+
+    return `
+      <div class='photo-credit'>
+        Photo by
+        <span>${author}</span>
+        <a target="_blank" href="http://${website}">${website}</a>
+      </div>
+    `
+  }
+
+  return "";
+}
+
+function annotatePhoto({title, desc, credit}){
+  return $(`
+    <div>
+      <h2 class="photo-title">${title}</h2>
+      <span>${desc}</span>
+      ${photoCredit(credit)}
+    </div>
+  `)
 }
 
 function perfect_gallery(element, gallery_id){
