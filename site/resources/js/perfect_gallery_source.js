@@ -61,7 +61,7 @@ function createCell(rowWidth, summedRatios, aspect){
             </div>`);
 }
 
-function createImage(url){
+function createImage(url, title){
   let img = $(`<img class="gallery-image" data-loading=true>`)
 
   img
@@ -73,10 +73,7 @@ function createImage(url){
         maxWidth: "90%",
         maxHeight: "90%",
         opacity: 0.85,
-        title: (() => {
-          return $("<div class='foobar' href='#'>click me!</div>")
-            .on("click", (() => alert("clicked!")))
-        })
+        title: (() => title)
       });
     }))
     .attr("src", `img/${url}`)
@@ -84,16 +81,17 @@ function createImage(url){
   return img;
 }
 
-let render = (galleryElement, rowWidth, layout) => {
+let render = (galleryElement, rowWidth, layout, annotate) => {
   let $container = $("<div></div>");
 
   for(let row of layout){
     let $row = $('<div class="gallery-row"></div>');
     let summedRatios = _.reduce(row, ((s, [url, {aspect}]) => s + aspect), 0)
 
-    for(let [url, {width, height, aspect}] of row){
+    for(let [url, {width, height, aspect, data}] of row){
+      console.log(data);
       $row.append(
-        createCell(rowWidth, summedRatios, aspect).append(createImage(url))
+        createCell(rowWidth, summedRatios, aspect).append(createImage(url, annotate(data)))
       );
     }
 
@@ -118,19 +116,25 @@ function request_gallery(id){
   })
 }
 
+function annotatePhoto({title, desc}){
+  return $("<div></div>")
+    .append(`<strong>${title}</strong>`)
+    .append(`<span>${desc}</span>`)
+}
+
 function perfect_gallery(element, gallery_id){
   var clone = element.cloneNode(false);
 
   $(element).on("transitionend", ((e) => {
     if(e.target.className == "gallery"){
       request_gallery(gallery_id).then((media) => {
-              e.target.parentNode.replaceChild(clone, e.target);
+        e.target.parentNode.replaceChild(clone, e.target);
 
         var gallery_width = clone.getBoundingClientRect().width;
         var gallery_height = window.innerHeight;
         var layout = perfect_layout(gallery_width, gallery_height, media);
 
-        render(clone, gallery_width, layout);
+        render(clone, gallery_width, layout, annotatePhoto);
       });
     }
   }));

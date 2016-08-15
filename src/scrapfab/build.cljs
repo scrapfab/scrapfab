@@ -76,7 +76,6 @@
         source (->> media-library
                     (filter (partial media/tagged? tags))
                     (sort-by media/rating >)
-                    ;;(into {})
                     (media/to-json))]
     (.writeFileSync fs path source)
     true))

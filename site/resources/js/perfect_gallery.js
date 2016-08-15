@@ -85,7 +85,7 @@ function createCell(rowWidth, summedRatios, aspect) {
   return $("<div class=\"gallery-cell\"\n                 style=\"width: " + width + "px; height " + height + "px;\">\n            </div>");
 }
 
-function createImage(url) {
+function createImage(url, _title) {
   var img = $("<img class=\"gallery-image\" data-loading=true>");
 
   img.on("load", function () {
@@ -98,9 +98,7 @@ function createImage(url) {
       maxHeight: "90%",
       opacity: 0.85,
       title: function title() {
-        return $("<div class='foobar' href='#'>click me!</div>").on("click", function () {
-          return alert("clicked!");
-        });
+        return _title;
       }
     });
   }).attr("src", "img/" + url);
@@ -108,7 +106,7 @@ function createImage(url) {
   return img;
 }
 
-var render = function render(galleryElement, rowWidth, layout) {
+var render = function render(galleryElement, rowWidth, layout, annotate) {
   var $container = $("<div></div>");
 
   var _iteratorNormalCompletion = true;
@@ -141,8 +139,10 @@ var render = function render(galleryElement, rowWidth, layout) {
           var width = _step2$value$.width;
           var height = _step2$value$.height;
           var aspect = _step2$value$.aspect;
+          var data = _step2$value$.data;
 
-          $row.append(createCell(rowWidth, summedRatios, aspect).append(createImage(url)));
+          console.log(data);
+          $row.append(createCell(rowWidth, summedRatios, aspect).append(createImage(url, annotate(data))));
         }
       } catch (err) {
         _didIteratorError2 = true;
@@ -196,6 +196,13 @@ function request_gallery(id) {
   });
 }
 
+function annotatePhoto(_ref9) {
+  var title = _ref9.title;
+  var desc = _ref9.desc;
+
+  return $("<div></div>").append("<strong>" + title + "</strong>").append("<span>" + desc + "</span>");
+}
+
 function perfect_gallery(element, gallery_id) {
   var clone = element.cloneNode(false);
 
@@ -208,7 +215,7 @@ function perfect_gallery(element, gallery_id) {
         var gallery_height = window.innerHeight;
         var layout = perfect_layout(gallery_width, gallery_height, media);
 
-        render(clone, gallery_width, layout);
+        render(clone, gallery_width, layout, annotatePhoto);
       });
     }
   });

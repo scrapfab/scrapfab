@@ -15,16 +15,16 @@
   (let [source (.readFileSync fs "site/media.edn")]
     (read-string (.toString source))))
 
-(defrecord MediaInfo [width height aspect tags desc rate title])
+(defrecord MediaInfo [width height aspect data])
 
 (defn process-info
   [name {:keys [width height]}]
   (map->MediaInfo
-    (merge {:width width
-            :height height
-            :aspect (/ width height)}
-           (select-keys (get media-meta name)
-                        [:tags :desc :rate :title]))))
+    {:width width
+     :height height
+     :aspect (/ width height)
+     :data (select-keys (get media-meta name)
+                        [:tags :desc :rate :title])}))
 
 (defn- load-info
   "Given a path to a media collection item, return a channel which contains
@@ -69,9 +69,9 @@
   "Returns true if all tags in given as the first argument are associated
   with the media given as the second argument."
   [tags media]
-  (seq (intersection (set tags) (:tags (second media)))))
+  (seq (intersection (set tags) (get-in (second media) [:data :tags]))))
 
-(defn rating [[_ {:keys [rate]}]] rate)
+(defn rating [[_ {:keys [data]}]] (:rate data))
 
 (defn to-json
   [media-info]
