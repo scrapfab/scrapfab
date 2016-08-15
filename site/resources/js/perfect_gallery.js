@@ -82,26 +82,34 @@ function createCell(rowWidth, summedRatios, aspect) {
   var width = parseInt(rowWidth / summedRatios * aspect);
   var height = parseInt(rowWidth / summedRatios);
 
-  return $("<div class=\"gallery-cell\"\n                 style=\"width: " + width + "px; height " + height + "px;\">\n            </div>")[0];
+  return $("<div class=\"gallery-cell\"\n                 style=\"width: " + width + "px; height " + height + "px;\">\n            </div>");
 }
 
 function createImage(url) {
-  var img = document.createElement("img");
+  var img = $("<img class=\"gallery-image\" data-loading=true>");
 
-  img.className = "gallery-image";
-  img.setAttribute("data-loading", true);
-
-  img.addEventListener("load", function () {
-    return img.removeAttribute("data-loading");
-  });
-
-  img.src = "img/" + url;
+  img.on("load", function () {
+    return img.removeAttr("data-loading");
+  }).on("click", function () {
+    $.colorbox({
+      href: "img/" + url,
+      transition: "fade",
+      maxWidth: "90%",
+      maxHeight: "90%",
+      opacity: 0.85,
+      title: function title() {
+        return $("<div class='foobar' href='#'>click me!</div>").on("click", function () {
+          return alert("clicked!");
+        });
+      }
+    });
+  }).attr("src", "img/" + url);
 
   return img;
 }
 
 var render = function render(galleryElement, rowWidth, layout) {
-  var container = document.createElement("div");
+  var $container = $("<div></div>");
 
   var _iteratorNormalCompletion = true;
   var _didIteratorError = false;
@@ -111,7 +119,7 @@ var render = function render(galleryElement, rowWidth, layout) {
     for (var _iterator = layout[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       var row = _step.value;
 
-      var rowElement = document.createElement("div");
+      var $row = $('<div class="gallery-row"></div>');
       var summedRatios = _.reduce(row, function (s, _ref7) {
         var _ref8 = _slicedToArray(_ref7, 2);
 
@@ -119,8 +127,6 @@ var render = function render(galleryElement, rowWidth, layout) {
         var aspect = _ref8[1].aspect;
         return s + aspect;
       }, 0);
-
-      rowElement.className = "gallery-row";
 
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
@@ -136,11 +142,7 @@ var render = function render(galleryElement, rowWidth, layout) {
           var height = _step2$value$.height;
           var aspect = _step2$value$.aspect;
 
-          var cell = createCell(rowWidth, summedRatios, aspect);
-          var img = createImage(url);
-
-          cell.appendChild(img);
-          rowElement.appendChild(cell);
+          $row.append(createCell(rowWidth, summedRatios, aspect).append(createImage(url)));
         }
       } catch (err) {
         _didIteratorError2 = true;
@@ -157,7 +159,7 @@ var render = function render(galleryElement, rowWidth, layout) {
         }
       }
 
-      container.appendChild(rowElement);
+      $container.append($row);
     }
   } catch (err) {
     _didIteratorError = true;
@@ -174,7 +176,7 @@ var render = function render(galleryElement, rowWidth, layout) {
     }
   }
 
-  galleryElement.appendChild(container);
+  $(galleryElement).append($container);
 };
 
 /*

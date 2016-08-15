@@ -59,6 +59,10 @@ body,
     overflow: hidden;
 }
 
+.foobar {
+    height: 100px;
+}
+
 .gallery-cell {
     border: 0;
     float: left;

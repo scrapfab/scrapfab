@@ -80,10 +80,12 @@
 (def stylesheets
  ["/css/muncie.css"
   "/css/pure-min.css"
+  "/css/colorbox.css"
   "/css/style.css"])
 
 (def javascripts
  ["https://code.jquery.com/jquery-3.1.0.js"
+  "https://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.6.4/jquery.colorbox.js"
   "/js/lodash.js"
   "/js/polyfill.min.js"
   "/js/linear_partition.js"

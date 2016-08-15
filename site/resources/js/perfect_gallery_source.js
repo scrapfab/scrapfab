@@ -58,43 +58,49 @@ function createCell(rowWidth, summedRatios, aspect){
 
   return $(`<div class="gallery-cell"
                  style="width: ${width}px; height ${height}px;">
-            </div>`)[0];
+            </div>`);
 }
 
 function createImage(url){
-  let img = document.createElement("img");
+  let img = $(`<img class="gallery-image" data-loading=true>`)
 
-  img.className = "gallery-image";
-  img.setAttribute("data-loading", true);
-
-  img.addEventListener("load", (() => img.removeAttribute("data-loading")))
-
-  img.src = "img/" + url;
+  img
+    .on("load", (() => img.removeAttr("data-loading")))
+    .on("click", (() => {
+      $.colorbox({
+        href: `img/${url}`,
+        transition: "fade",
+        maxWidth: "90%",
+        maxHeight: "90%",
+        opacity: 0.85,
+        title: (() => {
+          return $("<div class='foobar' href='#'>click me!</div>")
+            .on("click", (() => alert("clicked!")))
+        })
+      });
+    }))
+    .attr("src", `img/${url}`)
 
   return img;
 }
 
 let render = (galleryElement, rowWidth, layout) => {
-  let container = document.createElement("div");
+  let $container = $("<div></div>");
 
   for(let row of layout){
-    let rowElement = document.createElement("div");
+    let $row = $('<div class="gallery-row"></div>');
     let summedRatios = _.reduce(row, ((s, [url, {aspect}]) => s + aspect), 0)
 
-    rowElement.className = "gallery-row";
-
     for(let [url, {width, height, aspect}] of row){
-      let cell = createCell(rowWidth, summedRatios, aspect);
-      let img = createImage(url);
-
-      cell.appendChild(img);
-      rowElement.appendChild(cell);
+      $row.append(
+        createCell(rowWidth, summedRatios, aspect).append(createImage(url))
+      );
     }
 
-    container.appendChild(rowElement);
+    $container.append($row);
   }
 
-  galleryElement.appendChild(container);
+  $(galleryElement).append($container);
 }
 
 /*
