@@ -11,11 +11,6 @@
   []
   [:img.logo {:src "/img/toolbox.svg"}])
 
-(def main-navigation
-  [{:url "/about" :label "About"}
-   {:url "/services" :label "Services"}
-   {:url "/contact" :label "Contact"}])
-
 (defn who-we-are
   []
   [:div
