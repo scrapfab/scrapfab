@@ -67,4 +67,18 @@
 
  "trailer.jpg" {:title "Bike Trailer"
                      :desc  ""
-                     :tags  #{:metal}}}
+                     :tags  #{:metal}}
+
+ "windmill.jpg" {:title "Windmill Barrel Fountain"
+                 :desc ""
+                 :tags #{:prop}}
+
+ "wash_sewing.jpg" {:title "Wash Room @ Vertex Festival"
+                    :desc ""
+                    :rate 4
+                    :tags #{:set}}
+
+ "wash_planter.jpg" {:title "Water Heater Planter @ Vertex Festival"
+                     :desc  ""
+                     :rate  4
+                     :tags #{:prop}}}
