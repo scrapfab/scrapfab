@@ -34,8 +34,6 @@
     [logo]
     [:p.text-center
      "Custom fabricators making fantasies come alive."]
-    [:h1.site-heading "Our Work"]
-    [:hr]
     [:a {:href "#gallery"}]
     body
     [who-we-are]]

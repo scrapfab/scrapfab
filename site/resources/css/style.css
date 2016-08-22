@@ -23,9 +23,14 @@ hr {
 }
 
 .gallery-menu {
+  position: relative;
   margin: 0.5em 0 0.25em 0;
   text-align: center;
   text-transform: uppercase;
+}
+
+.gallery-menu-heading {
+  font-size: 1.5em;
 }
 
 .service {

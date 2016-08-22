@@ -170,17 +170,33 @@ function set_hash(hash){
 }
 
 $(document).on("click", ".gallery-menu-link", ((e) => {
+  console.log("foobar");
+
   e.preventDefault();
   e.stopPropagation();
+
   set_hash(e.target.getAttribute("href"))
   $(".pure-menu-selected").removeClass("pure-menu-selected");
-  $(e.target).parent().addClass("pure-menu-selected");
+
+  if($(e.target).hasClass("pure-menu-heading")){
+    $(e.target).addClass("pure-menu-selected");
+  } else {
+    $(e.target).parent().addClass("pure-menu-selected");
+  }
+
   init();
 }));
 
 function init(){
   let id = window.location.hash ? window.location.hash.substring(1) : "all";
-  $(`a.gallery-menu-link[href="#${id}"]`).parent().addClass("pure-menu-selected")
+  let $element = $(`a.gallery-menu-link[href="#${id}"]`)
+
+  if( $element.hasClass("pure-menu-heading") ){
+    $element.addClass("pure-menu-selected");
+  } else {
+    $element.parent().addClass("pure-menu-selected");
+  }
+
   let gal = document.querySelectorAll(".gallery")[0];
   perfect_gallery(gal, id);
 }

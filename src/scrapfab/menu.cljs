@@ -23,6 +23,16 @@
                    (on-change e))}
       label]]))
 
+(defn brand-link
+  [& {:keys [url label class on-change selected?]}]
+  [:a.pure-menu-heading.pure-menu-link
+   {:href     url
+    :class    (str class "-link " class "-heading" (when selected? " pure-menu-selected"))
+    :on-click (fn [e]
+                (.preventDefault e)
+                (on-change e))}
+   label])
+
 (defn horizontal-menu
   [& {:keys [items
              current-id
@@ -36,18 +46,27 @@
            id-fn       (fn [item] (:id item))
            selected-fn (fn [item] (= current-id (id-fn item)))
            url-fn      (constantly "#")}}]
-  [:div.pure-menu.pure-menu-horizontal
-   (class-opts class)
-   [:ul.pure-menu-list
-    (class-opts class)
-    (doall
-      (for [item items]
-        ^{:key (id-fn item)}
-        [menu-item :url       (url-fn item)
-                   :label     (label-fn item)
-                   :on-change on-change
-                   :class     class
-                   :selected? (selected-fn item)]))]])
+  (let [[brand & items] items]
+    [:div.pure-menu.pure-menu-horizontal
+     (class-opts class)
+     (when (:brand? brand)
+       [brand-link :url      (url-fn brand)
+                   :label    (label-fn brand)
+                   :class    class
+                   :on-chane on-change
+                   :selected? (selected-fn brand)])
+     [:ul.pure-menu-list
+      {:class (str class "-list")}
+      (doall
+        (for [item (if (:brand? brand)
+                     items
+                     (conj items brand))]
+          ^{:key (id-fn item)}
+          [menu-item :url       (url-fn item)
+                     :label     (label-fn item)
+                     :on-change on-change
+                     :class     class
+                     :selected? (selected-fn item)]))]]))
 
 (defn navigation
   [& {:keys [current-url items class]}]
