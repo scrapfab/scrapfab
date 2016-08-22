@@ -254,7 +254,6 @@ $(document).on("click", ".gallery-menu-link", function (e) {
 
 function init() {
   var id = window.location.hash ? window.location.hash.substring(1) : "all";
-  console.log($("a[href=\"#" + id + "\"]"));
   $("a.gallery-menu-link[href=\"#" + id + "\"]").parent().addClass("pure-menu-selected");
   var gal = document.querySelectorAll(".gallery")[0];
   perfect_gallery(gal, id);
