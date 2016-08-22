@@ -32,6 +32,7 @@
   [body stylesheets javascripts]
   [:html
     [:head
+     [:meta {:name "viewport" :content "width=device-width"}]
      (doall
        (map (fn [style]
               ^{:key style}
