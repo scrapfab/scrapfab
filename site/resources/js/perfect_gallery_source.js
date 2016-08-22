@@ -170,8 +170,6 @@ function set_hash(hash){
 }
 
 $(document).on("click", ".gallery-menu-link", ((e) => {
-  console.log("foobar");
-
   e.preventDefault();
   e.stopPropagation();
 
@@ -187,6 +185,36 @@ $(document).on("click", ".gallery-menu-link", ((e) => {
   init();
 }));
 
+function toggleElement(target){
+  if( $(target).hasClass("custom-toggle") ){
+    return $(target);
+  } else {
+    return $(target).parents(".custom-toggle");
+  }
+}
+
+function showMenu(target){
+  $(".gallery-menu").removeClass("pure-menu-horizontal")
+  $(".gallery-menu").show();
+  toggleElement(target).addClass("open");
+}
+
+function hideMenu(target){
+  $(".gallery-menu").hide()
+  $(".gallery-menu").addClass("pure-menu-horizontal")
+  toggleElement(target).removeClass("open");
+}
+
+$(document).on("click touchstart", ".custom-toggle", ((e) => {
+  e.preventDefault();
+  showMenu(e.target);
+}))
+
+$(document).on("click touchstart", ".custom-toggle.open", ((e) => {
+  e.preventDefault();
+  hideMenu(e.target);
+}))
+
 function init(){
   let id = window.location.hash ? window.location.hash.substring(1) : "all";
   let $element = $(`a.gallery-menu-link[href="#${id}"]`)
@@ -199,6 +227,10 @@ function init(){
 
   let gal = document.querySelectorAll(".gallery")[0];
   perfect_gallery(gal, id);
+
+  if( $(".custom-toggle.open").length > 0 ){
+    hideMenu($(".custom-toggle.open"));
+  }
 }
 
 init()
