@@ -23,6 +23,12 @@
    inkscape:export-ydpi="300">
   <defs
      id="defs4">
+     <style type="text/css">
+       @font-face {
+           font-family: "Muncie";
+           src: url("/fonts/Muncie.ttf");
+       }
+     </style>
     <linearGradient
        id="linearGradient5744"
        osb:paint="solid">
