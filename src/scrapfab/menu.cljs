@@ -9,12 +9,19 @@
   [class]
   (when (some? class) {:class class}))
 
-(defn brand-heading
-  [& {:keys [class brand]}]
-  (when (some? brand)
-    [:div.pure-menu-heading
-     (class-opts class)
-     brand]))
+(defn menu-item
+  [& {:keys [url label on-change class selected?]}]
+  (let [item-class (str class "-item" (when selected? " pure-menu-selected"))
+        link-class (str class "-link")]
+    [:li.pure-menu-item
+     {:class item-class}
+     [:a.pure-menu-link
+      {:href     url
+       :class    link-class
+       :on-click (fn [e]
+                   (.preventDefault e)
+                   (on-change e))}
+      label]]))
 
 (defn horizontal-menu
   [& {:keys [items
@@ -24,38 +31,28 @@
              url-fn
              selected-fn
              on-change
-             class
-             brand]
+             class]
       :or {label-fn    (fn [item] (:label item))
            id-fn       (fn [item] (:id item))
            selected-fn (fn [item] (= current-id (id-fn item)))
            url-fn      (constantly "#")}}]
   [:div.pure-menu.pure-menu-horizontal
    (class-opts class)
-   [brand-heading :class class :brand brand]
    [:ul.pure-menu-list
     (class-opts class)
     (doall
       (for [item items]
         ^{:key (id-fn item)}
-        [:li.pure-menu-item
-         (class-opts (str class
-                          "-item"
-                          (when (selected-fn item)
-                            " pure-menu-selected")))
-         [:a.pure-menu-link
-          {:href     (url-fn item)
-           :class    (str class "-link")
-           :on-click (fn [e]
-                       (.preventDefault e)
-                       (on-change item))}
-          (label-fn item)]]))]])
+        [menu-item :url       (url-fn item)
+                   :label     (label-fn item)
+                   :on-change on-change
+                   :class     class
+                   :selected? (selected-fn item)]))]])
 
 (defn navigation
-  [& {:keys [current-url items class brand]}]
+  [& {:keys [current-url items class]}]
   [horizontal-menu :items items
                    :class class
-                   :brand brand
                    :current-id current-url
                    :id-fn :url
                    :url-fn :url

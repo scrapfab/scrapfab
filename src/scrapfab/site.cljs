@@ -42,7 +42,7 @@
    [:div.pure-u-1-24]])
 
 (def service-navigation
-  [{:url "#all" :label "All"}
+  [{:url "#all" :label "Our Work" :brand? true}
    {:url "#metal" :label "Metal Fabrication"}
    {:url "#prop" :label "Prop Fabrication"}
    {:url "#set" :label "Set Design"}
