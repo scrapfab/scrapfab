@@ -241,7 +241,30 @@ function menuScrollBottom(){
   return $(".gallery").offset().top + $(".gallery").outerHeight();
 }
 
-$(document).on("scroll", ((e) => {
+function carryHeader($header, $content){
+  let $spacer = $("<div></div>").addClass("responsive-spacer");
+  let scrollTop = () => $content.offset().top - $header.outerHeight();
+  let scrollBottom = () => $content.offset().top + $content.outerHeight();
+
+  $spacer.insertAfter($header);
+
+  $(window).scroll((e) => {
+    let scroll = $(document).scrollTop();
+
+    if (scroll > scrollTop() && scroll < scrollBottom()) {
+      let height = $header.outerHeight();
+      $spacer.css("padding-top", `${height}px`);
+      $header.addClass("fixed-header");
+    } else {
+      $spacer.css("padding-top", "0");
+      $header.removeClass("fixed-header");
+    }
+  })
+}
+
+carryHeader( $(".responsive-menu"), $(".gallery") );
+
+$(window).scroll(((e) => {
   let scrollTop = $(document).scrollTop();
 
   if (scrollTop > menuScrollTop() && scrollTop < menuScrollBottom()) {

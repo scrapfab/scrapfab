@@ -26,7 +26,7 @@
      <style type="text/css">
        @font-face {
            font-family: "Muncie";
-           src: url("/fonts/Muncie.ttf");
+           src: url("/fonts/Muncie.ttf") format("truetype");
        }
      </style>
     <linearGradient

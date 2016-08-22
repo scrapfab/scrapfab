@@ -315,7 +315,34 @@ function menuScrollBottom() {
   return $(".gallery").offset().top + $(".gallery").outerHeight();
 }
 
-$(document).on("scroll", function (e) {
+function carryHeader($header, $content) {
+  var $spacer = $("<div></div>").addClass("responsive-spacer");
+  var scrollTop = function scrollTop() {
+    return $content.offset().top - $header.outerHeight();
+  };
+  var scrollBottom = function scrollBottom() {
+    return $content.offset().top + $content.outerHeight();
+  };
+
+  $spacer.insertAfter($header);
+
+  $(window).scroll(function (e) {
+    var scroll = $(document).scrollTop();
+
+    if (scroll > scrollTop() && scroll < scrollBottom()) {
+      var height = $header.outerHeight();
+      $spacer.css("padding-top", height + "px");
+      $header.addClass("fixed-header");
+    } else {
+      $spacer.css("padding-top", "0");
+      $header.removeClass("fixed-header");
+    }
+  });
+}
+
+carryHeader($(".responsive-menu"), $(".gallery"));
+
+$(window).scroll(function (e) {
   var scrollTop = $(document).scrollTop();
 
   if (scrollTop > menuScrollTop() && scrollTop < menuScrollBottom()) {
