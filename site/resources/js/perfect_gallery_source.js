@@ -233,4 +233,25 @@ function init(){
   }
 }
 
+function menuScrollTop(){
+  return $(".gallery").offset().top - $(".responsive-menu").outerHeight();
+}
+
+function menuScrollBottom(){
+  return $(".gallery").offset().top + $(".gallery").outerHeight();
+}
+
+$(document).on("scroll", ((e) => {
+  let scrollTop = $(document).scrollTop();
+
+  if (scrollTop > menuScrollTop() && scrollTop < menuScrollBottom()) {
+    let menuHeight = $(".responsive-menu").outerHeight()
+    $(".responsive-spacer").css("padding-top", `${menuHeight}px`);
+    $(".responsive-menu").addClass("fixed-header");
+  } else {
+    $(".responsive-spacer").css("padding-top", "0");
+    $(".responsive-menu").removeClass("fixed-header");
+  }
+}))
+
 init()

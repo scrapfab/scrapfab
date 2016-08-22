@@ -52,6 +52,7 @@
    [navigation :items service-navigation
                :current-url url
                :class "gallery-menu"]
+   [:div.responsive-spacer]
    body])
 
 (defn service-index
