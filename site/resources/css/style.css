@@ -33,6 +33,10 @@ hr {
   font-size: 1.5em;
 }
 
+.gallery-menu-heading.pure-menu-selected {
+  color: #000;
+}
+
 .service {
     border-style: solid none none none;
     border-width: 1px;
@@ -96,7 +100,7 @@ hr {
 }
 
 .profile-picture {
-  max-width: 400px;
+  max-width: 60%;
   display: block;
   margin: 2rem auto;
   border-radius: 50%;

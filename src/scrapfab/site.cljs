@@ -17,11 +17,11 @@
   [:h1.site-heading "Who We Are"]
   [:hr]
   [:div.pure-g
-   [:div.pure-u-1-2.profile
+   [:div.pure-u-1.pure-u-md-1-2.pure-u-lg-1-2.profile
      [:img.profile-picture {:src "/img/good_deal.jpg"}]
      [:h2.profile-name "Good Deal Neil"]
      [:p.profile-text "Professional problem solver."]]
-   [:div.pure-u-1-2.profile
+   [:div.pure-u-1.pure-u-md-1-2.pure-u-lg-1-2.profile
      [:img.profile-picture {:src "/img/dmitry.jpg"}]
      [:h2.profile-name "Dmitry Kolobov"]
      [:p.profile-text "Scrap scientist."]]]])
@@ -77,6 +77,7 @@
 (def stylesheets
  ["/css/muncie.css"
   "/css/pure-min.css"
+  "http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css"
   "/css/colorbox.css"
   "/css/style.css"])
 
