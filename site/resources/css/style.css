@@ -1,6 +1,6 @@
 /* some style */
 
-body { background: #eee; }
+body { background: #fdfdfd; }
 
 body,
 .pure-g [class *= "pure-u"],
@@ -161,7 +161,7 @@ hr {
   text-align: center;
 }
 
-@media (max-width: 360px) {
+@media (max-width: 568px) {
     .custom-toggle {
       display: block;
     }
@@ -176,6 +176,7 @@ hr {
     }
 
     .gallery-menu {
+      text-align: left;
       display: none;
       width: 100%;
       overflow-x: scroll;
