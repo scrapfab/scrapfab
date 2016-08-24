@@ -57,7 +57,7 @@
   (let [[brand & items] items
         selected-fn     (fn [item] (sub-url? current-url (:url item)))]
     [:div.responsive-menu
-     [:div.pure-menu.responsive-mobile-menu
+     [:div.pure-menu.responsive-mobile-menu.fixedsticky
       [brand-link :url       (:url brand)
                   :label     (:label brand)
                   :class     class

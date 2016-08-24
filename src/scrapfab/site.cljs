@@ -9,8 +9,10 @@
 
 (defn logo
   []
-  [:img.logo {:src "/img/toolbox.svg"}])
-
+  [:object.logo
+   {:type "image/svg+xml"
+    :data "/img/toolbox.svg"}])
+    
 (defn who-we-are
   []
   [:div
@@ -79,6 +81,7 @@
   "/css/pure-min.css"
   "http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css"
   "/css/colorbox.css"
+  "/css/fixedsticky.css"
   "/css/style.css"])
 
 (def javascripts
@@ -87,4 +90,5 @@
   "/js/lodash.js"
   "/js/polyfill.min.js"
   "/js/linear_partition.js"
+  "/js/fixedsticky.js"
   "/js/perfect_gallery.js"])

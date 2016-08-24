@@ -23,7 +23,14 @@ hr {
 }
 
 .responsive-menu {
+  top:        0px;
+  left:       4.1667%;
+  background: #fff;
   text-align: center;
+}
+
+.responsive-menu.fixedsticky-on {
+  width: 91.6667%;
 }
 
 .responsive-mobile-menu {
@@ -159,15 +166,6 @@ hr {
   margin: 1em 0;
 
   text-align: center;
-}
-
-.fixed-header {
-  position: fixed;
-  z-index: 1000;
-  top: 0;
-  left: 4.1667%;
-  right: 4.1667%;
-  background: #fff;
 }
 
 @media (max-width: 568px) {

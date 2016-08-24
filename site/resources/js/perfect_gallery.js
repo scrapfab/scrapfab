@@ -2,6 +2,8 @@
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
+FixedSticky.tests.sticky = false;
+
 /*
 ---------------------------------------
 ---- Layout
@@ -105,6 +107,14 @@ function createImage(url, _title) {
 
   return img;
 }
+
+$(document).on("cbox_complete", function (e) {
+  console.log("resizing caption");
+  var $caption = $("#cboxTitle");
+  var size = $caption.outerHeight();
+  $("#cboxTitle").css("top", "-" + size + "px");
+  $("#cboxContent").css("margin-top", size + "px");
+});
 
 var render = function render(galleryElement, rowWidth, layout, annotate) {
   var $container = $("<div></div>");
@@ -316,43 +326,9 @@ function menuScrollBottom() {
 }
 
 function carryHeader($header, $content) {
-  var $spacer = $("<div></div>").addClass("responsive-spacer");
-  var scrollTop = function scrollTop() {
-    return $content.offset().top - $header.outerHeight();
-  };
-  var scrollBottom = function scrollBottom() {
-    return $content.offset().top + $content.outerHeight();
-  };
-
-  $spacer.insertAfter($header);
-
-  $(window).scroll(function (e) {
-    var scroll = $(document).scrollTop();
-
-    if (scroll > scrollTop() && scroll < scrollBottom()) {
-      var height = $header.outerHeight();
-      $spacer.css("padding-top", height + "px");
-      $header.addClass("fixed-header");
-    } else {
-      $spacer.css("padding-top", "0");
-      $header.removeClass("fixed-header");
-    }
-  });
+  $header.fixedsticky();
 }
 
 carryHeader($(".responsive-menu"), $(".gallery"));
-
-$(window).scroll(function (e) {
-  var scrollTop = $(document).scrollTop();
-
-  if (scrollTop > menuScrollTop() && scrollTop < menuScrollBottom()) {
-    var menuHeight = $(".responsive-menu").outerHeight();
-    $(".responsive-spacer").css("padding-top", menuHeight + "px");
-    $(".responsive-menu").addClass("fixed-header");
-  } else {
-    $(".responsive-spacer").css("padding-top", "0");
-    $(".responsive-menu").removeClass("fixed-header");
-  }
-});
 
 init();

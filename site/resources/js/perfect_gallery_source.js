@@ -1,3 +1,4 @@
+FixedSticky.tests.sticky = false;
 
 /*
 ---------------------------------------
@@ -80,6 +81,14 @@ function createImage(url, title){
 
   return img;
 }
+
+$(document).on("cbox_complete", ((e) => {
+  console.log("resizing caption");
+  let $caption = $("#cboxTitle");
+  let size = $caption.outerHeight();
+  $("#cboxTitle").css("top", `-${size}px`);
+  $("#cboxContent").css("margin-top", `${size}px`);
+}))
 
 let render = (galleryElement, rowWidth, layout, annotate) => {
   let $container = $("<div></div>");
@@ -242,39 +251,9 @@ function menuScrollBottom(){
 }
 
 function carryHeader($header, $content){
-  let $spacer = $("<div></div>").addClass("responsive-spacer");
-  let scrollTop = () => $content.offset().top - $header.outerHeight();
-  let scrollBottom = () => $content.offset().top + $content.outerHeight();
-
-  $spacer.insertAfter($header);
-
-  $(window).scroll((e) => {
-    let scroll = $(document).scrollTop();
-
-    if (scroll > scrollTop() && scroll < scrollBottom()) {
-      let height = $header.outerHeight();
-      $spacer.css("padding-top", `${height}px`);
-      $header.addClass("fixed-header");
-    } else {
-      $spacer.css("padding-top", "0");
-      $header.removeClass("fixed-header");
-    }
-  })
+  $header.fixedsticky();
 }
 
 carryHeader( $(".responsive-menu"), $(".gallery") );
-
-$(window).scroll(((e) => {
-  let scrollTop = $(document).scrollTop();
-
-  if (scrollTop > menuScrollTop() && scrollTop < menuScrollBottom()) {
-    let menuHeight = $(".responsive-menu").outerHeight()
-    $(".responsive-spacer").css("padding-top", `${menuHeight}px`);
-    $(".responsive-menu").addClass("fixed-header");
-  } else {
-    $(".responsive-spacer").css("padding-top", "0");
-    $(".responsive-menu").removeClass("fixed-header");
-  }
-}))
 
 init()
