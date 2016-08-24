@@ -100,6 +100,7 @@
     (go
       (let [media-library (async/<! (media/load-library))
             gallery-done  (process-galleries! media-library)]
+        (println media-library)
         (write-assets!)
         (doseq [[url page] site-map]
           (let [html  (render-page layout url page media-library)]

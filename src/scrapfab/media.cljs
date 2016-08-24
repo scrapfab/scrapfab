@@ -3,7 +3,7 @@
   (:require [clojure.set :refer [intersection]]
             [cljs.nodejs :as nodejs]
             [cljs.reader :refer [read-string]]
-            [cljs.core.async :as async]))
+            [cljs.core.async :as async :refer [<!]]))
 
 (defonce fs (nodejs/require "fs"))
 (defonce gm (nodejs/require "gm"))
@@ -18,7 +18,8 @@
 (defrecord MediaInfo [width height aspect data])
 
 (defn process-info
-  [name {:keys [width height]}]
+  [name {:keys [width height]} filesize]
+  (println "image:" name width "X" height "size:" filesize)
   (map->MediaInfo
     {:width width
      :height height
@@ -26,25 +27,54 @@
      :data (select-keys (get media-meta name)
                         [:tags :desc :rate :title :credit])}))
 
+(defn get-dimensions
+  "Given a gm img object as an argument, return a channel which will contain
+  the underlying image's dimensions."
+  [name img]
+  (let [c (async/chan)]
+    (.size img
+           (fn [err size]
+             (if (some? err)
+               (println "warning:" name "is not an image")
+               (async/put! c (js->clj size :keywordize-keys true)))
+             (async/close! c)))
+    c))
+
+(defn get-filesize
+  "Given a gm img object as an argument, return a channel which will contain
+  the underlying image's filesize."
+  [name img]
+  (let [c (async/chan)]
+    (.filesize img
+               (fn [err filesize]
+                 (if (some? err)
+                   (println "warning: could not get" name "filesize")
+                   (async/put! c filesize))
+                 (async/close! c)))
+   c))
+
 (defn- load-info
   "Given a path to a media collection item, return a channel which contains
   a pair [path media-info]."
   [name]
-  (let [c (async/chan)]
-    (.size (gm (.join path media-dir name))
-           (fn [err size]
-             (if err
-               (println "warning: " name "is not an image")
-               (when (contains? media-meta name)
-                (async/put! c [name (process-info name (js->clj size :keywordize-keys true))])))
-             (async/close! c)))
-    c))
+  (async/pipe (go
+                (let [img      (gm (.join path media-dir name))
+                      dims     (get-dimensions name img)
+                      filesize (get-filesize name img)]
+                  [name (<! dims) (<! filesize)]))
+              (async/chan 1 (map (fn [info] [name (apply process-info info)])))))
+
+(defn image?
+  [p]
+  (= ".jpg" (.extname path p)))
 
 (defn- load-media
   "Returns channel containing [path media-info] pairs for all
   media items."
   [paths]
-  (async/merge (map load-info paths)))
+  (async/merge (->> paths
+                    (filter image?)
+                    (map load-info))))
 
 (defn- create-library
   "Given a sequence of media names, return a channel containing a hash
