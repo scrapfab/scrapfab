@@ -1,5 +1,3 @@
-FixedSticky.tests.sticky = false;
-
 /*
 ---------------------------------------
 ---- Layout

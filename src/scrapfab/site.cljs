@@ -12,7 +12,7 @@
   [:object.logo
    {:type "image/svg+xml"
     :data "/img/toolbox.svg"}])
-    
+
 (defn who-we-are
   []
   [:div
