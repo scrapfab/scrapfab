@@ -3,10 +3,11 @@
   (:require [clojure.set :refer [intersection]]
             [cljs.nodejs :as nodejs]
             [cljs.reader :refer [read-string]]
-            [cljs.core.async :as async :refer [<!]]))
+            [cljs.core.async :as async :refer [<!]]
+
+            [scrapfab.media.gm :refer [get-dimensions get-filesize orientation gm]]))
 
 (defonce fs (nodejs/require "fs"))
-(defonce gm (nodejs/require "gm"))
 (defonce path (nodejs/require "path"))
 
 (defonce media-dir "site/resources/img")
@@ -19,39 +20,14 @@
 
 (defn process-info
   [name {:keys [width height]} filesize]
-  (println "image:" name width "X" height "size:" filesize)
-  (map->MediaInfo
-    {:width width
-     :height height
-     :aspect (/ width height)
-     :data (select-keys (get media-meta name)
-                        [:tags :desc :rate :title :credit])}))
-
-(defn get-dimensions
-  "Given a gm img object as an argument, return a channel which will contain
-  the underlying image's dimensions."
-  [name img]
-  (let [c (async/chan)]
-    (.size img
-           (fn [err size]
-             (if (some? err)
-               (println "warning:" name "is not an image")
-               (async/put! c (js->clj size :keywordize-keys true)))
-             (async/close! c)))
-    c))
-
-(defn get-filesize
-  "Given a gm img object as an argument, return a channel which will contain
-  the underlying image's filesize."
-  [name img]
-  (let [c (async/chan)]
-    (.filesize img
-               (fn [err filesize]
-                 (if (some? err)
-                   (println "warning: could not get" name "filesize")
-                   (async/put! c filesize))
-                 (async/close! c)))
-   c))
+  (let [aspect (/ width height)]
+    (map->MediaInfo
+      {:width width
+       :height height
+       :aspect aspect
+       :orientation (orientation aspect)
+       :data (select-keys (get media-meta name)
+                          [:tags :desc :rate :title :credit])})))
 
 (defn- load-info
   "Given a path to a media collection item, return a channel which contains
