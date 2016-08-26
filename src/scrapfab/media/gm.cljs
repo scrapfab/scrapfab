@@ -35,11 +35,11 @@
   (if (< aspect 1) :portrait :landscape))
 
 (defn resize-width
-  [gm width]
-  (.resize gm width))
+  [img width]
+  (.resize img width))
 
 (defn resize-height
-  [gm height]
-  (.resize gm height))
+  [img height]
+  (.resize img nil height))
 
 

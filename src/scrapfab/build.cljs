@@ -8,7 +8,8 @@
             [cljs.reader :refer [read-string]]
             [scrapfab.site :as core]
             [scrapfab.util :refer [ls read-in]]
-            [scrapfab.media :as media]))
+            [scrapfab.media :as media]
+            [scrapfab.media.gm :as gm :refer [gm resize-width resize-height]]))
 
 (nodejs/enable-util-print!)
 
@@ -16,9 +17,8 @@
 (defonce file-path (nodejs/require "path"))
 (defonce mkdirp (nodejs/require "mkdirp"))
 (defonce ncp (nodejs/require "ncp"))
-(defonce gm (nodejs/require "gm"))
 
-(.mkdirp mkdirp "build/media")
+(.sync mkdirp "build/media")
 
 (defn url->path
   "Converts the url of a page to a filename, relative to the root
@@ -93,16 +93,54 @@
 
 (defn write-assets!
   []
-  (ncp "site/resources" "build"))
+  (let [c (async/chan)]
+    (ncp "site/resources"
+         "build"
+         (fn [err]
+           (if err
+             (println "Could not copy resources.")
+             (async/put! c true))
+           (async/close! c)))
+    c))
+
+(def MAX-WIDTH 1920)
+(def MAX-HEIGHT 1920)
+
+(defn write-cb
+  [path]
+  (fn [err]
+    (if err
+      (println "coult not write image" path err)
+      (println path "written"))))
+
+(defn preprocess-media
+  [media-library]
+  (let [img-dir "build/img"]
+    (println "Resizing images.")
+    (doseq [[name {:keys [orientation width height]}] media-library]
+      (let [img-path (.join file-path img-dir name)
+            img (gm img-path)]
+        (condp = orientation
+          :landscape
+          (when (> width MAX-WIDTH)
+            (println "resizing" img-path)
+            (.write (resize-width img MAX-WIDTH)
+                    img-path
+                    (write-cb img-path)))
+          :portrait
+          (when (> height MAX-HEIGHT)
+            (println "resizing" img-path)
+            (.write (resize-height img MAX-HEIGHT)
+                    img-path
+                    (write-cb img-path))))))))
 
 (defn -main [& args]
   (let [{:keys [site-map layout]} core/scrapfab]
     (go
       (let [media-library (async/<! (media/load-library))
             gallery-done  (process-galleries! media-library)]
-        (doseq [[n i] media-library]
-          (println n i))
-        (write-assets!)
+        (when (async/<! (write-assets!))
+          (preprocess-media media-library))
         (doseq [[url page] site-map]
           (let [html  (render-page layout url page media-library)]
             (write-page! url html)))))))
