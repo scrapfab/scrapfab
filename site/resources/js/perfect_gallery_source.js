@@ -51,23 +51,22 @@ function perfect_layout(gallery_width, gallery_height, media){
 ---------------------------------------
 */
 
-function createCell(rowWidth, summedRatios, aspect){
-  let width = parseInt(rowWidth / summedRatios * aspect);
-  let height = parseInt(rowWidth / summedRatios);
-
+function createCell(width, height){
   return $(`<div class="gallery-cell"
                  style="width: ${width}px; height ${height}px;">
             </div>`);
 }
 
-function createImage(url, title){
+function createImage(name, title, width){
   let img = $(`<img class="gallery-image" data-loading=true>`)
+  let gallery_url = imageURL(name, width);
+  let view_url = `img/lg/${name}`;
 
   img
     .on("load", (() => img.removeAttr("data-loading")))
     .on("click", (() => {
       $.colorbox({
-        href: `img/${url}`,
+        href: view_url,
         transition: "fade",
         maxWidth: "90%",
         maxHeight: "90%",
@@ -75,9 +74,19 @@ function createImage(url, title){
         title: (() => title)
       });
     }))
-    .attr("src", `img/${url}`)
+    .attr("src", gallery_url)
 
   return img;
+}
+
+function imageURL(name, width){
+  if( width < 320) {
+    return `img/sm/${name}`;
+  } else if ( width < 990 ) {
+    return `img/med/${name}`;
+  } else if ( width < 1920 ) {
+    return `img/lg/${name}`;
+  }
 }
 
 $(document).on("cbox_complete", ((e) => {
@@ -86,7 +95,7 @@ $(document).on("cbox_complete", ((e) => {
   let size = $caption.outerHeight();
   $("#cboxTitle").css("top", `-${size}px`);
   $("#cboxContent").css("margin-top", `${size}px`);
-}))
+}));
 
 let render = (galleryElement, rowWidth, layout, annotate) => {
   let $container = $("<div></div>");
@@ -95,9 +104,12 @@ let render = (galleryElement, rowWidth, layout, annotate) => {
     let $row = $('<div class="gallery-row"></div>');
     let summedRatios = _.reduce(row, ((s, [url, {aspect}]) => s + aspect), 0)
 
-    for(let [url, {width, height, aspect, data}] of row){
+    for(let [name, {aspect, data}] of row){
+      let width = parseInt(rowWidth / summedRatios * aspect);
+      let height = parseInt( rowWidth / summedRatios );
+
       $row.append(
-        createCell(rowWidth, summedRatios, aspect).append(createImage(url, annotate(data)))
+        createCell(width, height).append(createImage(name, annotate(data), width))
       );
     }
 

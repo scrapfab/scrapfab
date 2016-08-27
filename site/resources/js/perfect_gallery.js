@@ -78,21 +78,20 @@ function perfect_layout(gallery_width, gallery_height, media) {
 ---------------------------------------
 */
 
-function createCell(rowWidth, summedRatios, aspect) {
-  var width = parseInt(rowWidth / summedRatios * aspect);
-  var height = parseInt(rowWidth / summedRatios);
-
+function createCell(width, height) {
   return $("<div class=\"gallery-cell\"\n                 style=\"width: " + width + "px; height " + height + "px;\">\n            </div>");
 }
 
-function createImage(url, _title) {
+function createImage(name, _title, width) {
   var img = $("<img class=\"gallery-image\" data-loading=true>");
+  var gallery_url = imageURL(name, width);
+  var view_url = "img/lg/" + name;
 
   img.on("load", function () {
     return img.removeAttr("data-loading");
   }).on("click", function () {
     $.colorbox({
-      href: "img/" + url,
+      href: view_url,
       transition: "fade",
       maxWidth: "90%",
       maxHeight: "90%",
@@ -101,9 +100,19 @@ function createImage(url, _title) {
         return _title;
       }
     });
-  }).attr("src", "img/" + url);
+  }).attr("src", gallery_url);
 
   return img;
+}
+
+function imageURL(name, width) {
+  if (width < 320) {
+    return "img/sm/" + name;
+  } else if (width < 990) {
+    return "img/med/" + name;
+  } else if (width < 1920) {
+    return "img/lg/" + name;
+  }
 }
 
 $(document).on("cbox_complete", function (e) {
@@ -142,14 +151,15 @@ var render = function render(galleryElement, rowWidth, layout, annotate) {
         for (var _iterator2 = row[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
           var _step2$value = _slicedToArray(_step2.value, 2);
 
-          var url = _step2$value[0];
+          var name = _step2$value[0];
           var _step2$value$ = _step2$value[1];
-          var width = _step2$value$.width;
-          var height = _step2$value$.height;
           var aspect = _step2$value$.aspect;
           var data = _step2$value$.data;
 
-          $row.append(createCell(rowWidth, summedRatios, aspect).append(createImage(url, annotate(data))));
+          var width = parseInt(rowWidth / summedRatios * aspect);
+          var height = parseInt(rowWidth / summedRatios);
+
+          $row.append(createCell(width, height).append(createImage(name, annotate(data), width)));
         }
       } catch (err) {
         _didIteratorError2 = true;
