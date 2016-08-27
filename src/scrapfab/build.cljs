@@ -9,7 +9,7 @@
             [scrapfab.site :as core]
             [scrapfab.util :refer [ls read-in]]
             [scrapfab.media :as media]
-            [scrapfab.media.gm :as gm :refer [gm resize-width resize-height]]))
+            [scrapfab.media.gm :as gm :refer [gm resize-width get-dimensions resize-height]]))
 
 (nodejs/enable-util-print!)
 
@@ -106,41 +106,46 @@
 (def MAX-WIDTH 1920)
 (def MAX-HEIGHT 1920)
 
-(defn write-cb
-  [path]
-  (fn [err]
-    (if err
-      (println "coult not write image" path err)
-      (println path "written"))))
+(def IMG-BUILD-DIR "build/img")
 
-(defn preprocess-media
+(defn resize-img
+  [[name {:keys [orientation width height] :as data}]]
+  (let [c        (async/chan 1 (map (fn [dimensions] [name (merge data dimensions)])))
+        img-path (.join file-path IMG-BUILD-DIR name)
+        img      (gm img-path)
+        done     (fn [err]
+                   (when-not err
+                     (async/pipe (get-dimensions name (gm img-path))
+                                 c)))]
+    (condp = orientation
+      :landscape (when (> width MAX-WIDTH)
+                  (.write (resize-width img MAX-WIDTH)
+                          img-path
+                          done)
+                  c)
+
+      :portrait  (when (> height MAX-HEIGHT)
+                  (.write (resize-height img MAX-HEIGHT)
+                          img-path
+                          done)
+                  c))))
+
+(defn resize-images
   [media-library]
-  (let [img-dir "build/img"]
-    (println "Resizing images.")
-    (doseq [[name {:keys [orientation width height]}] media-library]
-      (let [img-path (.join file-path img-dir name)
-            img (gm img-path)]
-        (condp = orientation
-          :landscape
-          (when (> width MAX-WIDTH)
-            (println "resizing" img-path)
-            (.write (resize-width img MAX-WIDTH)
-                    img-path
-                    (write-cb img-path)))
-          :portrait
-          (when (> height MAX-HEIGHT)
-            (println "resizing" img-path)
-            (.write (resize-height img MAX-HEIGHT)
-                    img-path
-                    (write-cb img-path))))))))
+  (println "Resizing images.")
+  (let [chans (->> media-library (map resize-img) (filter some?))]
+    (async/merge chans)))
 
 (defn -main [& args]
   (let [{:keys [site-map layout]} core/scrapfab]
     (go
-      (let [media-library (async/<! (media/load-library))
+      (let [md            (<! (media/load-library))
+            media-library (when (<! (write-assets!))
+                            (<! (async/reduce (partial apply assoc)
+                                              md
+                                              (async/pipe (resize-images md)
+                                                          (async/chan)))))
             gallery-done  (process-galleries! media-library)]
-        (when (async/<! (write-assets!))
-          (preprocess-media media-library))
         (doseq [[url page] site-map]
           (let [html  (render-page layout url page media-library)]
             (write-page! url html)))))))
