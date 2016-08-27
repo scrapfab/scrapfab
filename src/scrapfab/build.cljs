@@ -18,6 +18,9 @@
 (defonce mkdirp (nodejs/require "mkdirp"))
 (defonce ncp (nodejs/require "ncp"))
 
+(defonce imagemin (nodejs/require "imagemin"))
+(defonce imagemin-jpegoptim (nodejs/require "imagemin-jpegoptim"))
+
 (.sync mkdirp "build/media")
 
 (defn url->path
@@ -136,16 +139,29 @@
   (let [chans (->> media-library (map resize-img) (filter some?))]
     (async/merge chans)))
 
+(defn optimize-images
+  []
+  (let [c       (async/chan)
+        pattern (clj->js [(.join file-path IMG-BUILD-DIR "*.jpg")])]
+    (println pattern)
+    (.then (imagemin pattern
+                     "build/optimized"
+                     (clj->js {"plugins" [(imagemin-jpegoptim (clj->js {"max" 70}))]}))
+           (fn [files] (async/put! c "optimized images")))
+    c))
+
 (defn -main [& args]
   (let [{:keys [site-map layout]} core/scrapfab]
     (go
       (let [md            (<! (media/load-library))
             media-library (when (<! (write-assets!))
+                            (println "resizing...")
                             (<! (async/reduce (partial apply assoc)
                                               md
-                                              (async/pipe (resize-images md)
-                                                          (async/chan)))))
+                                              (resize-images md))))
             gallery-done  (process-galleries! media-library)]
+        (println "optmizing...")
+        (println (<! (optimize-images)))
         (doseq [[url page] site-map]
           (let [html  (render-page layout url page media-library)]
             (write-page! url html)))))))
