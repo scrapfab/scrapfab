@@ -23,6 +23,7 @@ hr {
 }
 
 .responsive-menu {
+  z-index: 1000;
   top:        0px;
   left:       4.1667%;
   background: #fff;
