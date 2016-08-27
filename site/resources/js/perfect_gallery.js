@@ -82,10 +82,10 @@ function createCell(width, height) {
   return $("<div class=\"gallery-cell\"\n                 style=\"width: " + width + "px; height " + height + "px;\">\n            </div>");
 }
 
-function createImage(name, _title, width) {
+function createImage(name, _title, width, height) {
   var img = $("<img class=\"gallery-image\" data-loading=true>");
   var gallery_url = imageURL(name, width);
-  var view_url = "img/lg/" + name;
+  var view_url = "img/" + (breakpoints.length - 1) + "/" + name;
 
   img.on("load", function () {
     return img.removeAttr("data-loading");
@@ -95,23 +95,23 @@ function createImage(name, _title, width) {
       transition: "fade",
       maxWidth: "90%",
       maxHeight: "90%",
-      opacity: 0.85,
+      opacity: 0.95,
       title: function title() {
         return _title;
       }
     });
-  }).attr("src", gallery_url);
+  }).attr("src", gallery_url).css("width", width).css("height", height);
 
   return img;
 }
 
+var breakpoints = [320, 480, 768, 1024, 1920];
+
 function imageURL(name, width) {
-  if (width < 320) {
-    return "img/sm/" + name;
-  } else if (width < 990) {
-    return "img/med/" + name;
-  } else if (width < 1920) {
-    return "img/lg/" + name;
+  for (var idx in breakpoints) {
+    if (width < breakpoints[idx]) {
+      return "img/" + idx + "/" + name;
+    }
   }
 }
 
@@ -159,7 +159,7 @@ var render = function render(galleryElement, rowWidth, layout, annotate) {
           var width = parseInt(rowWidth / summedRatios * aspect);
           var height = parseInt(rowWidth / summedRatios);
 
-          $row.append(createCell(width, height).append(createImage(name, annotate(data), width)));
+          $row.append(createCell(width, height).append(createImage(name, annotate(data), width, height)));
         }
       } catch (err) {
         _didIteratorError2 = true;

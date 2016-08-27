@@ -57,10 +57,10 @@ function createCell(width, height){
             </div>`);
 }
 
-function createImage(name, title, width){
+function createImage(name, title, width, height){
   let img = $(`<img class="gallery-image" data-loading=true>`)
   let gallery_url = imageURL(name, width);
-  let view_url = `img/lg/${name}`;
+  let view_url = `img/${breakpoints.length - 1}/${name}`;
 
   img
     .on("load", (() => img.removeAttr("data-loading")))
@@ -70,22 +70,22 @@ function createImage(name, title, width){
         transition: "fade",
         maxWidth: "90%",
         maxHeight: "90%",
-        opacity: 0.85,
+        opacity: 0.95,
         title: (() => title)
       });
     }))
     .attr("src", gallery_url)
+    .css("width", width)
+    .css("height", height)
 
   return img;
 }
 
+let breakpoints = [320, 480, 768, 1024, 1920];
+
 function imageURL(name, width){
-  if( width < 320) {
-    return `img/sm/${name}`;
-  } else if ( width < 990 ) {
-    return `img/med/${name}`;
-  } else if ( width < 1920 ) {
-    return `img/lg/${name}`;
+  for( let idx in breakpoints ){
+    if(width < breakpoints[idx]){ return `img/${idx}/${name}`}
   }
 }
 
@@ -109,7 +109,7 @@ let render = (galleryElement, rowWidth, layout, annotate) => {
       let height = parseInt( rowWidth / summedRatios );
 
       $row.append(
-        createCell(width, height).append(createImage(name, annotate(data), width))
+        createCell(width, height).append(createImage(name, annotate(data), width, height))
       );
     }
 

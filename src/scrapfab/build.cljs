@@ -112,9 +112,11 @@
 (def IMG-BUILD-DIR "build/img")
 
 (def sizes
-  {"sm"  320
-   "med" 990
-   "lg"  1920})
+  [320
+   480
+   768
+   1024
+   1920])
 
 (defn resize-img
   [[name {:keys [orientation width height] :as data}]]
@@ -137,28 +139,31 @@
                           done)
                   c))))
 
-(.sync mkdirp "build/img/sm")
-(.sync mkdirp "build/img/med")
-(.sync mkdirp "build/img/lg")
+(println "Making image directories" sizes)
+
+(doseq [x (range 0 (count sizes))]
+  (do
+    (println "making" (str "build/img/" x))
+    (.sync mkdirp (str "build/img/" x))))
 
 (defn resize
   [[name {:keys [orientation width height] :as data}]]
   (async/pipe (async/reduce (constantly [name data])
                             [name data]
                             (async/merge
-                              (map (fn [[size break-width]]
-                                     (let [c        (async/chan)
-                                           in-path  (.join file-path "site/resources/img" name)
-                                           out-path (.join file-path IMG-BUILD-DIR size name)]
-                                       (if (> width break-width)
-                                         (.write (resize-width (gm in-path) break-width)
-                                                 out-path
-                                                 (fn [err] (when-not err (async/close! c))))
-                                         (ncp in-path
-                                              out-path
-                                              (fn [err] (when-not err (async/close! c)))))
-                                       c))
-                                   sizes)))
+                              (map-indexed (fn [size break-width]
+                                             (let [c        (async/chan)
+                                                   in-path  (.join file-path "site/resources/img" name)
+                                                   out-path (.join file-path IMG-BUILD-DIR (str size) name)]
+                                               (if (> width break-width)
+                                                 (.write (resize-width (gm in-path) break-width)
+                                                         out-path
+                                                         (fn [err] (when-not err (async/close! c))))
+                                                 (ncp in-path
+                                                      out-path
+                                                      (fn [err] (when-not err (async/close! c)))))
+                                               c))
+                                           sizes)))
               (async/chan)))
 
 (defn resize-images
