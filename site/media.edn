@@ -1,9 +1,9 @@
 {"death_truck.jpg" {:title "Death Truck 2016"
                     :desc ""
                     :rate "5"
-                    :tags #{:sculpt :metal :prop}}
+                    :tags #{:sculpt :prop}}
 
- "fire_pit.jpg" {:title "Satanic Fire Pit"
+ "fire_pit.jpg" {:title "Baphomet Fire Pit"
                       :desc  ""
                       :rate  "6"
                       :credit {:author "Kit Castagne"
