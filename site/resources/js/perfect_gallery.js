@@ -213,13 +213,17 @@ function request_gallery(id) {
   });
 }
 
+function creditWebsite(website) {
+  return website ? "<a target=\"_blank\" href=\"http://" + website + "\">" + website + "</a>" : "";
+}
+
 function photoCredit(credit) {
   if (credit) {
     var author = credit.author;
     var website = credit.website;
 
 
-    return "\n      <div class='photo-credit'>\n        Photo by\n        <span>" + author + "</span>\n        <a target=\"_blank\" href=\"http://" + website + "\">" + website + "</a>\n      </div>\n    ";
+    return "\n      <div class='photo-credit'>\n        Photo by\n        <span>" + author + "</span>\n        " + creditWebsite(website) + "\n      </div>\n    ";
   }
 
   return "";

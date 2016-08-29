@@ -88,7 +88,7 @@
  ["https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"
   "https://cdnjs.cloudflare.com/ajax/libs/jquery.colorbox/1.6.4/jquery.colorbox.js"
   "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.15.0/lodash.min.js"
-  "/js/polyfill.min.js"
+  "https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.13.0/polyfill.min.js"
   "/js/linear_partition.js"
   "/js/fixedsticky.js"
   "/js/perfect_gallery.js"])

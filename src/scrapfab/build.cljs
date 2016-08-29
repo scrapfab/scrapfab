@@ -146,23 +146,29 @@
     (println "making" (str "build/img/" x))
     (.sync mkdirp (str "build/img/" x))))
 
+(defn write-gm
+  [gm path]
+  (let [c (async/chan)]
+    (.write (.quality gm 70) path (fn [err] (when-not err (async/close! c))))
+    c))
+
+(defn copy-file
+  [source dest]
+  (let [c (async/chan)]
+    (ncp source dest (fn [err] (when-not err (async/close! c))))
+    c))
+
 (defn resize
   [[name {:keys [orientation width height] :as data}]]
   (async/pipe (async/reduce (constantly [name data])
                             [name data]
                             (async/merge
                               (map-indexed (fn [size break-width]
-                                             (let [c        (async/chan)
-                                                   in-path  (.join file-path "site/resources/img" name)
+                                             (let [in-path  (.join file-path "site/resources/img" name)
                                                    out-path (.join file-path IMG-BUILD-DIR (str size) name)]
                                                (if (> width break-width)
-                                                 (.write (resize-width (gm in-path) break-width)
-                                                         out-path
-                                                         (fn [err] (when-not err (async/close! c))))
-                                                 (ncp in-path
-                                                      out-path
-                                                      (fn [err] (when-not err (async/close! c)))))
-                                               c))
+                                                 (write-gm (resize-width (gm in-path) break-width) out-path)
+                                                 (copy-file in-path out-path))))
                                            sizes)))
               (async/chan)))
 

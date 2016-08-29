@@ -42,6 +42,7 @@
                        :tags  #{:metal :sculpt}}
 
  "see_saw.jpg" {:title "See Saw"
+                :credit {:author "Sam McFadyen"}
                      :desc   ""
                      :rate   5
                      :tags   #{:metal :prop :sculpt}}

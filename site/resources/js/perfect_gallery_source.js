@@ -134,6 +134,10 @@ function request_gallery(id){
   })
 }
 
+function creditWebsite(website){
+  return website ? `<a target="_blank" href="http://${website}">${website}</a>` : "";
+}
+
 function photoCredit(credit){
   if(credit){
     let {author, website} = credit;
@@ -142,7 +146,7 @@ function photoCredit(credit){
       <div class='photo-credit'>
         Photo by
         <span>${author}</span>
-        <a target="_blank" href="http://${website}">${website}</a>
+        ${creditWebsite(website)}
       </div>
     `
   }
