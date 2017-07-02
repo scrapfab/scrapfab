@@ -170,6 +170,22 @@ hr {
   text-align: center;
 }
 
+.muncie {
+  font-family: Muncie;
+}
+
+.red-white {
+    display: inline-block;
+    padding: 1rem 1rem 0 1rem;
+
+    text-decoration: none;
+    font-weight: 400;
+    font-size: 3em;
+
+    background: #a92b1e;
+    color: #fff;
+}
+
 @media (max-width: 568px) {
     .custom-toggle {
       display: block;

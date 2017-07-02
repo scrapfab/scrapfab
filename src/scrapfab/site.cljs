@@ -28,6 +28,15 @@
      [:h2.profile-name "Dmitry Kolobov"]
      [:p.profile-text "Scrap scientist."]]]])
 
+(defn footer
+  []
+  [:div
+   [:h1.site-heading "Contact Us"]
+   [:div.text-center
+    [:a.red-white.muncie
+     {:href "mailto:scrapfab@gmail.com"}
+     "scrapfab@gmail.com"]]])
+
 (defn scrapfab-layout
   [current-url body]
   [:div.pure-g
@@ -38,7 +47,8 @@
      "Custom fabricators making fantasies come alive."]
     [:a {:href "#gallery"}]
     body
-    [who-we-are]]
+    [who-we-are]
+    [footer]]
    [:div.pure-u-1-24]])
 
 (def service-navigation
