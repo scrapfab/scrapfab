@@ -23,3 +23,4 @@ node run.js
                                 ;; Allowed categories: #{:metal :sculpt :set :prop}
  } ;; <- existing curly brace.      
 ```
+3. Run `rm -r build` and `node run.js`
