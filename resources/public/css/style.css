@@ -11,52 +11,16 @@ body,
     font-weight: 400;
 }
 
-.app {
-    margin: 0 auto;
-    width: 960px;
-}
-
-.main-menu.pure-menu-heading {
-    padding: 1rem 0.5rem 0 0;
-    color: #fff;
-    line-height: 4rem;
-}
-
 .logo {
-    font-family: Muncie;
-    font-size: 4rem;
-}
-
-.logo-scrap, .logo-fab {
-    padding: 1rem 0.5rem 0 0.5rem;
-}
-
-.logo-scrap {
-    background: #ee5e4f;
-}
-
-.logo-fab {
-    background: #a92b1e;
-}
-
-.main-menu.pure-menu {
-    padding-left: 0;
-    position: relative;
-
-    border-style: none none solid none;
-    border-width: 1px;
-}
-
-.main-menu.pure-menu-list {
-    text-transform: uppercase;
-    position: absolute;
-    line-height: 4rem;
-    right: 0;
-    font-size: 1em;
+  width: 33%;
+  display: block;
+  margin: 0 auto;
 }
 
 .service-menu {
-    text-align: center;
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 0.5em;
 }
 
 .service {
@@ -65,11 +29,42 @@ body,
     margin: 0 0 1rem 0;
 }
 
-.gallery-cell {
-    box-sizing: border-box;
-    padding: 0.25em;
+.gallery-image {
+    margin: 0;
+    border: 0;
+    width: 100%;
+    height: 100%;
+    vertical-align: top;
 }
 
-.gallery img {
-    vertical-align: bottom;
+.gallery-row {
+    display: table-row;
+}
+
+.gallery-cell {
+    border: 0;
+    display: inline-block;
+}
+
+.profile-picture {
+  max-width: 74%;
+  display: block;
+  margin: 0 auto;
+  border-radius: 50%;
+}
+
+.profile-name {
+  text-align: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.site-heading {
+  padding: 0.5em;
+  text-align: center;
+  border-width: 0 0 1px 0;
+  border-style: none none solid none;
+  border-color: rgba(0,0,0,0.25);
 }
