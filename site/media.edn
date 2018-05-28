@@ -10,26 +10,27 @@
                                :website "www.kitcastagne.com"}
                       :tags  #{:sculpt :metal}}
 
- "curvy_railing.jpg" {:title "Metal Railing for staircase"
-                           :desc  ""
-                           :tags  #{:metal}}
+ "curvy_railing_2.jpg" {:title "Ornate railing for residential staircase"
+                        :desc  ""
+                        :rate 5
+                        :tags  #{:metal}}
 
  "corp_head.jpg" {:title "Corporate Headquarters"
-                       :desc  ""
-                       :tags  #{:set}}
+                  :desc  ""
+                 :tags  #{:set}}
 
  "edc_flower.jpg"    {:title "Electric Daisy Carnival Flower"
-                           :desc  ""
-                           :rate  4
-                           :tags  #{:set}}
-
- "edc_show.jpg" {:title "Electric Daisy Carnival Flower and Monster"
                       :desc  ""
+                      :rate  4
                       :tags  #{:set}}
 
+ "edc_show.jpg" {:title "Electric Daisy Carnival Flower and Monster"
+                 :desc  ""
+                 :tags  #{:set}}
+
  "van_shelving.jpg" {:title "Shelving for soda repair vans."
-                          :desc  ""
-                          :tags  #{:metal}}
+                     :desc  ""
+                     :tags  #{:metal}}
 
  "fire_stick.jpg"  {:title "Fire Stick"
                          :desc ""
@@ -82,4 +83,25 @@
  "wash_planter.jpg" {:title "Water Heater Planter @ Vertex Festival"
                      :desc  ""
                      :rate  4
-                     :tags #{:prop}}}
+                     :tags #{:prop}}
+
+ "toyota_set_1.jpg" {:title "Toyota Set"
+                     :desc  ""
+                     :rate 5
+                     :tags #{:set}}
+
+ "1431_ogden.jpg" {:title "1431 Ogden"
+                   :desc  "Custom-made ornate metal door."
+                   :rate  5
+                   :tags  #{:metal}}
+
+ "esprit.jpg" {:title "Esprit Apartments"
+               :desc  "Re-frabricated the railings for the apartment complex."
+               :rate  5
+               :tags  #{:metal}}
+
+ "legoland.jpg" {:title "Legoland California"
+                 :desc  "Assembled slide structure and theming for Legoland California."
+                 :rate  6
+                 :tags #{:set}}}
+

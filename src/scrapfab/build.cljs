@@ -4,6 +4,7 @@
             [cljs.core.async :as async :refer [<!]]
             [cljs.pprint :refer [pprint]]
             [reagent.core :as reagent]
+            [reagent.dom.server :as reagent-server]
             [clojure.string :refer [join split]]
             [cljs.reader :refer [read-string]]
             [scrapfab.site :as core]
@@ -60,7 +61,7 @@
   rendered body HTML of the page."
   [layout url {:keys [render] :as page} media-library]
   (str "<!DOCTYPE html>\n"
-   (reagent/render-to-string
+   (reagent-server/render-to-string
    [root-layout
     [layout url
      [render url (dissoc page :render) media-library]]])))
